@@ -1,0 +1,61 @@
+# Fixture: ~/.ssh/config (complex, multi-hop, with comments)
+# Used by SSHConfigParserTests for round-trip and parsing validation.
+
+# Global options
+ServerAliveInterval 60
+AddKeysToAgent yes
+
+Host bastion-prod
+    HostName bastion.prod.example.com
+    User ec2-user
+    Port 22
+    IdentityFile ~/.ssh/prod_key
+    # Bastion for all prod hosts
+
+Host app-server
+    HostName 10.0.1.50
+    User deploy
+    Port 22
+    IdentityFile ~/.ssh/prod_key
+    ProxyJump bastion-prod
+
+Host db-primary
+    HostName 10.0.2.100
+    User dbadmin
+    Port 5432
+    ProxyJump ec2-user@bastion.prod.example.com
+
+Host openshift-api
+    HostName api.openshift.cluster.example.com
+    User kubeadmin
+    Port 6443
+    ProxyJump bastion-prod
+    StrictHostKeyChecking no
+
+# Lab / dev hosts
+Host lab-*
+    User vagrant
+    IdentityFile ~/.ssh/lab_key
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+
+Host lab-node1
+    HostName 192.168.56.101
+    # Primary lab node
+
+Host lab-node2
+    HostName 192.168.56.102
+
+# Multi-hop: Mac → jump1 → jump2 → target
+Host deep-target
+    HostName 10.10.10.50
+    User admin
+    ProxyJump admin@jump1.example.com:22,admin@jump2.example.com:22
+
+# Wildcard catch-all
+Host *
+    ServerAliveInterval 120
+    ServerAliveCountMax 3
+    ControlMaster auto
+    ControlPath ~/.ssh/cm-%r@%h:%p
+    ControlPersist 10m

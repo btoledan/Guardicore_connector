@@ -1,0 +1,44 @@
+apiVersion: v1
+clusters:
+- cluster:
+    server: https://api.openshift.cluster.example.com:6443
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCg==
+  name: openshift-prod
+- cluster:
+    server: https://api.staging.example.com:6443
+    insecure-skip-tls-verify: true
+  name: openshift-staging
+- cluster:
+    server: https://k8s.internal.example.com:6443
+  name: k8s-internal
+contexts:
+- context:
+    cluster: openshift-prod
+    namespace: platform-services
+    user: admin-prod
+  name: openshift-prod/admin-prod
+- context:
+    cluster: openshift-staging
+    namespace: default
+    user: admin-staging
+  name: openshift-staging/admin-staging
+- context:
+    cluster: k8s-internal
+    namespace: kube-system
+    user: k8s-admin
+  name: k8s-internal/k8s-admin
+current-context: openshift-prod/admin-prod
+kind: Config
+preferences: {}
+users:
+- name: admin-prod
+  user:
+    client-certificate-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCg==
+    client-key-data: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQo=
+- name: admin-staging
+  user:
+    token: sha256~staging-token-placeholder
+- name: k8s-admin
+  user:
+    client-certificate-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCg==
+    client-key-data: LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQo=

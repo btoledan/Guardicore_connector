@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!--
+      Helmsman is intentionally NOT sandboxed.
+      Rationale: PTY management, raw network sockets for scanning, and
+      broad filesystem access (~/.ssh, ~/.kube, /dev/tty.*) require
+      capabilities incompatible with the App Sandbox.
+
+      Entitlements present:
+        - com.apple.security.network.client       (outgoing TCP)
+        - com.apple.security.device.serial        (serial port access)
+        - com.apple.security.files.user-selected.read-write (open panels)
+      
+      Notably absent:
+        - com.apple.security.app-sandbox          (intentionally omitted)
+        - com.apple.security.network.server       (not needed)
+        - com.apple.security.scripting-targets    (not driving other apps)
+    -->
+
+    <!-- Outgoing network connections (SSH, Telnet, SFTP, scanning) -->
+    <key>com.apple.security.network.client</key>
+    <true/>
+
+    <!-- Serial port (IOKit) access for Serial session type -->
+    <key>com.apple.security.device.serial</key>
+    <true/>
+
+    <!-- Allow user-selected file access (open/save panels for key files, exports) -->
+    <key>com.apple.security.files.user-selected.read-write</key>
+    <true/>
+
+    <!-- Hardened runtime: allow JIT — not needed; keep off -->
+    <!-- Hardened runtime: allow unsigned memory — not needed; keep off -->
+
+    <!-- Touch ID / biometry via LocalAuthentication -->
+    <!-- No special entitlement needed; LAContext works without sandbox -->
+</dict>
+</plist>

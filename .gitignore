@@ -1,0 +1,38 @@
+# Build artifacts
+.build/
+DerivedData/
+*.xcarchive
+*.ipa
+
+# Xcode generated (regenerate with `make generate`)
+Helmsman.xcodeproj/
+Helmsman.xcworkspace/
+
+# macOS
+.DS_Store
+*.swp
+*~
+
+# Distribution
+*.dmg
+*.pkg
+export/
+
+# Secrets — NEVER commit
+*.p12
+*.mobileprovision
+fastlane/.env*
+notarization_credentials.sh
+
+# SPM
+.swiftpm/
+Package.resolved
+
+# Editor
+.vscode/
+.idea/
+*.xcuserstate
+xcuserdata/
+
+# Logs & transcripts (user data, not source)
+transcripts/
