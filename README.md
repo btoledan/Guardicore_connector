@@ -14,6 +14,7 @@ Guardicore_connector connects your Mac directly to Guardicore thin environments 
 - Validate traffic allow/block behaviour and correlate results with agent verdict logs
 - Inspect raw Calico NetworkPolicy CRDs and check for `action: Deny` enforcement
 - Export cluster snapshots as Markdown or JSON for reports and handoffs
+- Run Quick Actions (per-cluster typed commands) directly into the cluster terminal with automatic dashboard refresh
 
 ---
 
@@ -80,10 +81,24 @@ Authentication uses `sshpass` for password-based lab environments.
 
 ### Cluster View
 
-The Cluster View panel runs background `kubectl` commands against the cluster master over the double-hop SSH connection and parses the output into a live snapshot:
+The Cluster View panel runs background commands against the cluster master over the double-hop SSH connection and parses the output into a live snapshot.
+
+The CLI tool and command set adapt automatically to the cluster type:
+
+| Cluster type | Default IP | CLI | CNI |
+|---|---|---|---|
+| Rancher | 172.17.100.1 | `kubectl` | Calico |
+| RKE2 | 172.17.50.1 | `kubectl` | Calico |
+| k3s | 172.17.49.1 | `kubectl` | Calico |
+| OpenShift | 172.17.0.55 | `oc` | OVN-Kubernetes |
+| Custom | (user-defined) | `kubectl` | — |
 
 - **Phase 1** — nodes and all pods (fast, populates topology immediately)
-- **Phase 2** — Guardicore pods, DaemonSet, deployments, Calico policies, agent revision logs, events
+- **Phase 2** — Guardicore pods, DaemonSet, deployments, policies, agent revision logs, events. OpenShift also fetches `guardicore-orch`; Calico-specific commands are skipped on OVN clusters.
+
+### Quick Actions
+
+The Overview tab shows per-cluster Quick Actions that type commands directly into the live terminal. Actions are cluster-type aware (`kubectl` vs `oc`). After a Quick Action runs, the dashboard auto-refreshes (~1.5 s debounce) so metrics reflect the change immediately. Built-in actions can be hidden and custom actions added/removed from the Overview tab.
 
 ### Policy revision chain
 
@@ -93,7 +108,7 @@ The revision chain tracks whether Guardicore CM policies have propagated end-to-
 CM publish → gc-agent policy revision → Calico CRD annotation
 ```
 
-All three values are displayed together in the Overview tab so you can immediately see if a cluster is out of sync.
+All three values are displayed together in the Overview tab so you can immediately see if a cluster is out of sync. On OpenShift clusters (OVN-Kubernetes CNI), Calico revision data is not applicable and is omitted from the chain.
 
 ---
 
