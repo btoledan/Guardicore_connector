@@ -29,16 +29,27 @@ Guardicore_connector connects your Mac directly to Guardicore thin environments 
 
 ## Getting started (fresh clone)
 
+**Prerequisites: macOS 13+, Xcode 15+ (from the App Store)**
+
 ```bash
-# 1. Install prerequisites (one-time)
+# 1. Install Homebrew (if not already installed)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# 2. Install build tools
 brew install hudochenkov/sshpass/sshpass xcodegen
 
-# 2. Build
+# 3. Clone the repo
+git clone https://github.com/btoledan/Guardicore_connector.git
+cd Guardicore_connector
+
+# 4. Build
 make build
 
-# 3. Run
+# 5. Run
 open .build/DerivedData/Build/Products/Debug/Guardicore_connector.app
 ```
+
+Steps 1–2 are one-time setup. After that, `make build && open ...` is all you need for every subsequent build.
 
 ---
 
