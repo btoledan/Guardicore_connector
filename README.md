@@ -27,13 +27,16 @@ Guardicore_connector connects your Mac directly to Guardicore thin environments 
 
 ---
 
-## Build
+## Getting started (fresh clone)
 
 ```bash
-# Generate Xcode project and build the debug app
+# 1. Install prerequisites (one-time)
+brew install hudochenkov/sshpass/sshpass xcodegen
+
+# 2. Build
 make build
 
-# Run the app
+# 3. Run
 open .build/DerivedData/Build/Products/Debug/Guardicore_connector.app
 ```
 
