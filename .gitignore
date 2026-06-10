@@ -36,3 +36,11 @@ xcuserdata/
 
 # Logs & transcripts (user data, not source)
 transcripts/
+
+# graphify output (generated knowledge graph)
+graphify-out/
+
+# Local editor config
+.claude/
+.cursor/
+CLAUDE.md
