@@ -152,24 +152,38 @@ public struct GuardicoreCluster: Identifiable, Codable, Hashable, Sendable {
     public var password: String
 
     public enum ClusterType: String, Codable, CaseIterable, Sendable {
-        case rancher = "Rancher"
-        case rke2    = "RKE2"
-        case custom  = "Custom"
+        case rancher   = "Rancher"
+        case rke2      = "RKE2"
+        case k3s       = "k3s"
+        case openshift = "OpenShift"
+        case custom    = "Custom"
 
         public var defaultIP: String {
             switch self {
-            case .rancher: return "172.17.100.1"
-            case .rke2:    return "172.17.50.1"
-            case .custom:  return ""
+            case .rancher:   return "172.17.100.1"
+            case .rke2:      return "172.17.50.1"
+            case .k3s:       return "172.17.49.1"
+            case .openshift: return "172.17.0.55"
+            case .custom:    return ""
+            }
+        }
+
+        /// CLI tool used to talk to this cluster type.
+        public var cliTool: String {
+            switch self {
+            case .openshift: return "oc"
+            default:         return "kubectl"
             }
         }
     }
 
     public var ip: String {
         switch type {
-        case .rancher: return "172.17.100.1"
-        case .rke2:    return "172.17.50.1"
-        case .custom:  return customIP
+        case .rancher:   return "172.17.100.1"
+        case .rke2:      return "172.17.50.1"
+        case .k3s:       return "172.17.49.1"
+        case .openshift: return "172.17.0.55"
+        case .custom:    return customIP
         }
     }
 

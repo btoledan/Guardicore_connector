@@ -32,6 +32,9 @@ final class ClusterViewModel: ObservableObject {
         // enrichment, otherwise the new refreshID invalidates the in-flight Phase 2 guard.
         guard !isRefreshing && !isEnriching else { return }
 
+        let cli = session.spec.metadata["guardicoreCLI"] ?? "kubectl"
+        let isOpenShift = (session.spec.metadata["guardicoreClusterType"] == GuardicoreCluster.ClusterType.openshift.rawValue)
+
         let refreshID = UUID()
         activeRefreshID = refreshID
         isRefreshing = true
@@ -45,9 +48,9 @@ final class ClusterViewModel: ObservableObject {
         let coreResults = await fetchParallel(
             remoteBase: remoteBase,
             commands: [
-                ("version", "kubectl version --short 2>/dev/null || kubectl version", 15),
-                ("nodesJSON", "kubectl get nodes -o json", 20),
-                ("podsJSON", "kubectl get pods -A -o json", 45),
+                ("version", "\(cli) version --short 2>/dev/null || \(cli) version", 15),
+                ("nodesJSON", "\(cli) get nodes -o json", 20),
+                ("podsJSON", "\(cli) get pods -A -o json", 45),
             ]
         )
 
@@ -63,30 +66,39 @@ final class ClusterViewModel: ObservableObject {
         refreshStage = "Fetching Guardicore details…"
 
         let agentRevCmd = """
-        for pod in $(kubectl get pods -n guardicore -o name | grep daemonset); do echo "=== $pod ==="; kubectl exec -n guardicore $pod -- sh -c "tail -200 /var/log/gc-enforcement-policy.log 2>/dev/null | grep -i 'Policy revision' | tail -1"; done
+        for pod in $(\(cli) get pods -n guardicore -o name | grep daemonset); do echo "=== $pod ==="; \(cli) exec -n guardicore $pod -- sh -c "tail -200 /var/log/gc-enforcement-policy.log 2>/dev/null | grep -i 'Policy revision' | tail -1"; done
         """
-        let calicoRevCmd = """
+        // Calico revision grep only applies to non-OpenShift clusters
+        let calicoRevCmd = isOpenShift ? "echo 'OpenShift: no Calico'" : """
         (kubectl get networkpolicies -A -o yaml 2>/dev/null; kubectl get networkpolicies.crd.projectcalico.org -A -o yaml 2>/dev/null) | grep -E 'guardicore/policy-revision|guardicore/dc-inventory-revision|^  name:|^  namespace:' || true
         """
 
-        let detailResults = await fetchParallel(
-            remoteBase: remoteBase,
-            commands: [
-                ("guardicorePodsJSON", "kubectl get pods -n guardicore -o json", 20),
-                ("daemonSetJSON", "kubectl get ds -n guardicore -o json", 20),
-                ("deploymentsJSON", "kubectl get deploy -n guardicore -o json", 20),
-                ("statefulSetsJSON", "kubectl get sts -n guardicore -o json", 20),
-                ("calicoPoliciesJSON", "kubectl get networkpolicies.crd.projectcalico.org -A -o json", 25),
-                ("nodesLabels", "kubectl get nodes --show-labels", 25),
-                ("events", "kubectl get events -n guardicore --sort-by='.lastTimestamp' | tail -30", 25),
-                ("kubeEnforceLogs", "kubectl logs -n guardicore deploy/gc-kube-enforce --tail=80", 30),
-                ("kubeInventoryLogs", "POD=$(kubectl get pods -n guardicore -o name 2>/dev/null | grep gc-kube-inventory | head -1 | sed 's|pod/||'); [ -n \"$POD\" ] && kubectl logs -n guardicore \"$POD\" --tail=80 || true", 30),
-                ("standardNetworkPolicies", "kubectl get networkpolicies.networking.k8s.io -A", 25),
-                ("calicoPoliciesList", "kubectl get networkpolicies.crd.projectcalico.org -A", 25),
-                ("calicoRevisionGrep", calicoRevCmd, 45),
-                ("agentPolicyRevisionLogs", agentRevCmd, 90),
-            ]
-        )
+        var detailCommands: [(key: String, cmd: String, timeout: TimeInterval)] = [
+            ("guardicorePodsJSON", "\(cli) get pods -n guardicore -o json", 20),
+            ("daemonSetJSON", "\(cli) get ds -n guardicore -o json", 20),
+            ("deploymentsJSON", "\(cli) get deploy -n guardicore -o json", 20),
+            ("statefulSetsJSON", "\(cli) get sts -n guardicore -o json", 20),
+            ("nodesLabels", "\(cli) get nodes --show-labels", 25),
+            ("events", "\(cli) get events -n guardicore --sort-by='.lastTimestamp' | tail -30", 25),
+            ("kubeEnforceLogs", "\(cli) logs -n guardicore deploy/gc-kube-enforce --tail=80", 30),
+            ("standardNetworkPolicies", "\(cli) get networkpolicies.networking.k8s.io -A", 25),
+            ("agentPolicyRevisionLogs", agentRevCmd, 90),
+        ]
+
+        if isOpenShift {
+            // OpenShift: also fetch guardicore-orch namespace; skip Calico-specific commands
+            detailCommands.append((key: "orchPodsJSON", cmd: "oc get pods -n guardicore-orch -o json", timeout: 20))
+        } else {
+            // Standard kubectl clusters: Calico + kube-inventory
+            detailCommands.append(contentsOf: [
+                (key: "calicoPoliciesJSON", cmd: "kubectl get networkpolicies.crd.projectcalico.org -A -o json", timeout: 25),
+                (key: "calicoPoliciesList", cmd: "kubectl get networkpolicies.crd.projectcalico.org -A", timeout: 25),
+                (key: "calicoRevisionGrep", cmd: calicoRevCmd, timeout: 45),
+                (key: "kubeInventoryLogs", cmd: "POD=$(kubectl get pods -n guardicore -o name 2>/dev/null | grep gc-kube-inventory | head -1 | sed 's|pod/||'); [ -n \"$POD\" ] && kubectl logs -n guardicore \"$POD\" --tail=80 || true", timeout: 30),
+            ])
+        }
+
+        let detailResults = await fetchParallel(remoteBase: remoteBase, commands: detailCommands)
 
         guard activeRefreshID == refreshID else { return }
 

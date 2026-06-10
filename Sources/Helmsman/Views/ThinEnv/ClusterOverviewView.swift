@@ -596,7 +596,8 @@ private struct QuickActionsCard: View {
 
     private var builtInActions: [QuickAction] {
         let hidden = Set(hiddenActionsBlob.split(separator: "\n").map(String.init))
-        return ClusterCommands.quickActionBuiltIns.enumerated().compactMap { idx, cmd in
+        let clusterType = session.spec.metadata["guardicoreClusterType"]
+        return ClusterCommands.quickActionBuiltIns(forClusterType: clusterType).enumerated().compactMap { idx, cmd in
             guard !hidden.contains(cmd) else { return nil }
             return QuickAction(id: "qa-\(idx)", label: cmd, command: cmd, isCustom: false)
         }

@@ -5,6 +5,7 @@ import TerminalKit
 
 struct ClusterCommandsView: View {
     let session: TerminalSession
+    var clusterType: String? = nil
 
     @AppStorage(ClusterCustomCommandsStorage.appStorageKey)
     private var customCommandsBlob: String = ""
@@ -12,7 +13,7 @@ struct ClusterCommandsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            ForEach(ClusterCommands.allCommandGroups, id: \.title) { group in
+            ForEach(ClusterCommands.groups(forClusterType: clusterType), id: \.title) { group in
                 ClusterCommandGroupView(
                     title: group.title,
                     icon: group.icon,

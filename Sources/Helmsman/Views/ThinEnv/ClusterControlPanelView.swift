@@ -137,7 +137,7 @@ struct ClusterControlPanelView: View {
                     case .traffic:
                         TrafficValidationView(snapshot: snapshot, session: session)
                     case .commands:
-                        ClusterCommandsView(session: session)
+                        ClusterCommandsView(session: session, clusterType: session.spec.metadata["guardicoreClusterType"])
                     case .raw:
                         ClusterRawView(snapshot: snapshot)
                     }

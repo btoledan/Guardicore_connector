@@ -330,17 +330,20 @@ struct ThinEnvRow: View {
             let live = thinEnvStore.environment(id: env.id),
             let liveCluster = live.clusters.first(where: { $0.id == cluster.id })
         else { return }
+        let cli = liveCluster.type.cliTool
         activeTerminals.openCommand(
             liveCluster.clusterShellCommand(through: live),
             name: liveCluster.clusterTabName(in: live),
             metadata: [
                 "guardicoreTarget": "cluster",
+                "guardicoreClusterType": liveCluster.type.rawValue,
+                "guardicoreCLI": cli,
                 "guardicoreStatusCommand": liveCluster.clusterRemoteCommand(
-                    "kubectl get pods -n guardicore",
+                    "\(cli) get pods -n guardicore",
                     through: live
                 ),
-                // Template for running any kubectl command in the background:
-                // replace '__KUBECTL_PLACEHOLDER__' with the desired kubectl command.
+                // Template for running any command in the background:
+                // replace '__KUBECTL_PLACEHOLDER__' with the desired command.
                 "guardicoreRemoteBase": liveCluster.clusterRemoteCommand(
                     "__KUBECTL_PLACEHOLDER__",
                     through: live
@@ -351,17 +354,21 @@ struct ThinEnvRow: View {
 
     private func clusterIcon(_ cluster: GuardicoreCluster) -> String {
         switch cluster.type {
-        case .rancher: return "server.rack"
-        case .rke2:    return "cube.box"
-        case .custom:  return "gearshape"
+        case .rancher:   return "server.rack"
+        case .rke2:      return "cube.box"
+        case .k3s:       return "bolt.horizontal.fill"
+        case .openshift: return "circle.hexagongrid.fill"
+        case .custom:    return "gearshape"
         }
     }
 
     private func clusterColor(_ cluster: GuardicoreCluster) -> Color {
         switch cluster.type {
-        case .rancher: return AppTheme.semantic.success
-        case .rke2:    return AppTheme.accent.secondary
-        case .custom:  return AppTheme.accent.info
+        case .rancher:   return AppTheme.semantic.success
+        case .rke2:      return AppTheme.accent.secondary
+        case .k3s:       return .yellow
+        case .openshift: return .red
+        case .custom:    return AppTheme.accent.info
         }
     }
 }
