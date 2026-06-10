@@ -1,0 +1,447 @@
+{
+  "/Users/btoledan/Desktop/Helmsman/.claude/settings.json": {
+    "mtime": 1781002753.96002,
+    "ast_hash": "bfee062c3962c14264fd704e975a6b38",
+    "semantic_hash": "bfee062c3962c14264fd704e975a6b38"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Package.swift": {
+    "mtime": 1779282257.6727452,
+    "ast_hash": "0f0cac457c0691ac06a933f1dd2c0c0a",
+    "semantic_hash": "0f0cac457c0691ac06a933f1dd2c0c0a"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/App/AppCommands.swift": {
+    "mtime": 1779282283.4601488,
+    "ast_hash": "0a3fa8d2eba09adf209596b0bb0afafd",
+    "semantic_hash": "0a3fa8d2eba09adf209596b0bb0afafd"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/App/AppDelegate.swift": {
+    "mtime": 1779282240.1126742,
+    "ast_hash": "be0b02cf314f86200e8cdb5f5627a356",
+    "semantic_hash": "be0b02cf314f86200e8cdb5f5627a356"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/App/HelmsmanApp.swift": {
+    "mtime": 1779282240.1060905,
+    "ast_hash": "fa81db7b3dc214060b30763e52797bbd",
+    "semantic_hash": "fa81db7b3dc214060b30763e52797bbd"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Models/ActiveTerminalsStore.swift": {
+    "mtime": 1779282240.1465766,
+    "ast_hash": "0dd7d2ee69ec19e82cac7f26fe1a768c",
+    "semantic_hash": "0dd7d2ee69ec19e82cac7f26fe1a768c"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Models/ClusterSnapshot.swift": {
+    "mtime": 1781002927.1131425,
+    "ast_hash": "c7313a7765343756844e7385bfedf87c",
+    "semantic_hash": "c7313a7765343756844e7385bfedf87c"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Models/ClusterSnapshotExport.swift": {
+    "mtime": 1781002942.8961232,
+    "ast_hash": "738dfb9bf1a41e2db1b2971d87f10060",
+    "semantic_hash": "738dfb9bf1a41e2db1b2971d87f10060"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Models/ClusterViewModel.swift": {
+    "mtime": 1781002933.9870014,
+    "ast_hash": "f8ef942fc67ab8de74645b9d2bd6ed43",
+    "semantic_hash": "f8ef942fc67ab8de74645b9d2bd6ed43"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Models/KubeJSONParser.swift": {
+    "mtime": 1781002930.2926204,
+    "ast_hash": "7d5577d3d970dcec4651f4a54e688dda",
+    "semantic_hash": "7d5577d3d970dcec4651f4a54e688dda"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Models/SSHDoubleHop.swift": {
+    "mtime": 1779267444.5735283,
+    "ast_hash": "9a4723e0a864e06c897cd9934121131d",
+    "semantic_hash": "9a4723e0a864e06c897cd9934121131d"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Models/SSHToolLocator.swift": {
+    "mtime": 1779267444.5534863,
+    "ast_hash": "c8777a0b04d1b92b24bb88a446237c67",
+    "semantic_hash": "c8777a0b04d1b92b24bb88a446237c67"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Models/Session.swift": {
+    "mtime": 1779282283.477213,
+    "ast_hash": "5e75bc8c83664dd2078efae793825ed1",
+    "semantic_hash": "5e75bc8c83664dd2078efae793825ed1"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Models/SessionStore.swift": {
+    "mtime": 1779282283.471292,
+    "ast_hash": "067b9679ab1eb58776f8553b3384ddb7",
+    "semantic_hash": "067b9679ab1eb58776f8553b3384ddb7"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Models/ThinEnvStore.swift": {
+    "mtime": 1779282283.4666617,
+    "ast_hash": "cdfa41fd8b11b8ebe9388b4e82ea4d74",
+    "semantic_hash": "cdfa41fd8b11b8ebe9388b4e82ea4d74"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Models/ThinEnvironment.swift": {
+    "mtime": 1779281078.8013833,
+    "ast_hash": "38ba6b85cb1c3b78185ef463c509e65e",
+    "semantic_hash": "38ba6b85cb1c3b78185ef463c509e65e"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Models/WorkspaceProfile.swift": {
+    "mtime": 1779282240.141189,
+    "ast_hash": "daad03373b02edf0f5c32edb73fd81d3",
+    "semantic_hash": "daad03373b02edf0f5c32edb73fd81d3"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/Design/AppTheme.swift": {
+    "mtime": 1779267444.5542452,
+    "ast_hash": "51e8850250bbc678619215085d8e9f29",
+    "semantic_hash": "51e8850250bbc678619215085d8e9f29"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/Kube/KubeContextDockView.swift": {
+    "mtime": 1779282240.2042975,
+    "ast_hash": "9f72e57d7417d4397b263889ac257892",
+    "semantic_hash": "9f72e57d7417d4397b263889ac257892"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/MultiExec/MultiExecView.swift": {
+    "mtime": 1779282240.210583,
+    "ast_hash": "9054035adb57fb41a3585b47289abb08",
+    "semantic_hash": "9054035adb57fb41a3585b47289abb08"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/Network/NetworkScannerView.swift": {
+    "mtime": 1779282240.1628509,
+    "ast_hash": "ae4188d017d8aa24ad9c2a58dcd3e26b",
+    "semantic_hash": "ae4188d017d8aa24ad9c2a58dcd3e26b"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/Root/RootContentView.swift": {
+    "mtime": 1779282240.1986458,
+    "ast_hash": "5e90c202e3ba7fe4ad73670e83cf6bf5",
+    "semantic_hash": "5e90c202e3ba7fe4ad73670e83cf6bf5"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/Root/SidebarView.swift": {
+    "mtime": 1779267444.5903835,
+    "ast_hash": "61a54622485617757ec72219a3df13a8",
+    "semantic_hash": "61a54622485617757ec72219a3df13a8"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/SSH/ExportConnectionView.swift": {
+    "mtime": 1779282240.1817145,
+    "ast_hash": "19c1a7298cd4c99b2bb191f7c2e777ef",
+    "semantic_hash": "19c1a7298cd4c99b2bb191f7c2e777ef"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/SSH/ProxyJumpComposerView.swift": {
+    "mtime": 1779282240.187204,
+    "ast_hash": "9ac6a71f51edae3adc444532d0525df9",
+    "semantic_hash": "9ac6a71f51edae3adc444532d0525df9"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/Sessions/NewSessionSheet.swift": {
+    "mtime": 1779267444.592744,
+    "ast_hash": "cd1d3dfdc66efc073b40ed189df3244a",
+    "semantic_hash": "cd1d3dfdc66efc073b40ed189df3244a"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/Sessions/SessionRowView.swift": {
+    "mtime": 1779282240.194364,
+    "ast_hash": "39a90d7faf78d0b18a9d364385431848",
+    "semantic_hash": "39a90d7faf78d0b18a9d364385431848"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/Settings/SettingsView.swift": {
+    "mtime": 1779282240.152768,
+    "ast_hash": "04457bcec5dce7e25d2cca87182feaf4",
+    "semantic_hash": "04457bcec5dce7e25d2cca87182feaf4"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/Terminal/SFTPPaneView.swift": {
+    "mtime": 1779282240.1723182,
+    "ast_hash": "33e9081c34b8c61bf4fbcc4ad3e7f4dc",
+    "semantic_hash": "33e9081c34b8c61bf4fbcc4ad3e7f4dc"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/Terminal/TerminalPaneView.swift": {
+    "mtime": 1779282240.1676908,
+    "ast_hash": "ee3d03be037623588af8daffe38c6572",
+    "semantic_hash": "ee3d03be037623588af8daffe38c6572"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/Terminal/TerminalTabsView.swift": {
+    "mtime": 1780563423.454499,
+    "ast_hash": "dffae52640ea5f176c2873663f6b20b3",
+    "semantic_hash": "dffae52640ea5f176c2873663f6b20b3"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/ThinEnv/AddAggregatorSheet.swift": {
+    "mtime": 1779267444.5905056,
+    "ast_hash": "00d3c8d6e5114280fbf9c57739844b91",
+    "semantic_hash": "00d3c8d6e5114280fbf9c57739844b91"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/ThinEnv/AddClusterSheet.swift": {
+    "mtime": 1779267444.5905294,
+    "ast_hash": "36b5268b311edc1873bcdc41c787a128",
+    "semantic_hash": "36b5268b311edc1873bcdc41c787a128"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/ThinEnv/AddThinEnvSheet.swift": {
+    "mtime": 1779268248.611829,
+    "ast_hash": "71c72da458d988429afabee8b5496acc",
+    "semantic_hash": "71c72da458d988429afabee8b5496acc"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/ThinEnv/ClusterCommandsView.swift": {
+    "mtime": 1781002941.3651767,
+    "ast_hash": "a9edaa5021783b9504e64189ae8fcbaf",
+    "semantic_hash": "a9edaa5021783b9504e64189ae8fcbaf"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/ThinEnv/ClusterControlPanelView.swift": {
+    "mtime": 1779280435.274358,
+    "ast_hash": "fd6f8cfeb07051375f198097a0f329e0",
+    "semantic_hash": "fd6f8cfeb07051375f198097a0f329e0"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/ThinEnv/ClusterCustomCommandsStorage.swift": {
+    "mtime": 1781002357.7175133,
+    "ast_hash": "01b39666f026a5bf135b493f9fc06486",
+    "semantic_hash": "01b39666f026a5bf135b493f9fc06486"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/ThinEnv/ClusterOverviewView.swift": {
+    "mtime": 1781002940.354699,
+    "ast_hash": "7c08c1df9a455af2d4cb15e39c82becf",
+    "semantic_hash": "7c08c1df9a455af2d4cb15e39c82becf"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/ThinEnv/ClusterPoliciesView.swift": {
+    "mtime": 1779267444.586561,
+    "ast_hash": "e829d3a156119966fe6049e87839c866",
+    "semantic_hash": "e829d3a156119966fe6049e87839c866"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/ThinEnv/ClusterRawView.swift": {
+    "mtime": 1779267444.5535374,
+    "ast_hash": "0b25741a5e9e4f42fefb0583f30ae40a",
+    "semantic_hash": "0b25741a5e9e4f42fefb0583f30ae40a"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/ThinEnv/ClusterTopologyView.swift": {
+    "mtime": 1780563423.454187,
+    "ast_hash": "ee2da2e79355f3352345ba711297c49f",
+    "semantic_hash": "ee2da2e79355f3352345ba711297c49f"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/ThinEnv/ClusterViewComponents.swift": {
+    "mtime": 1779267444.5905955,
+    "ast_hash": "c9bacf704e95cae195c39a6879af31bc",
+    "semantic_hash": "c9bacf704e95cae195c39a6879af31bc"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/ThinEnv/ConnectionDetailsSheet.swift": {
+    "mtime": 1779267444.5926373,
+    "ast_hash": "3f6e227b398dbb7ab764b76df7ea8f21",
+    "semantic_hash": "3f6e227b398dbb7ab764b76df7ea8f21"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/ThinEnv/GuardicoreStatusView.swift": {
+    "mtime": 1781002937.8500319,
+    "ast_hash": "744c4348801302f14946f1eac45c084c",
+    "semantic_hash": "744c4348801302f14946f1eac45c084c"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/ThinEnv/PolicyDigestionView.swift": {
+    "mtime": 1779267444.5926669,
+    "ast_hash": "8ea3c502c94a28d7586603e2d8950aa6",
+    "semantic_hash": "8ea3c502c94a28d7586603e2d8950aa6"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/ThinEnv/ThinEnvRow.swift": {
+    "mtime": 1779267444.5619094,
+    "ast_hash": "bf2e3863bdae4bc1acc4ffaa89b9b858",
+    "semantic_hash": "bf2e3863bdae4bc1acc4ffaa89b9b858"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/ThinEnv/TrafficValidationView.swift": {
+    "mtime": 1780563423.4545891,
+    "ast_hash": "4090a905dcfb7498aa3b09335afa0203",
+    "semantic_hash": "4090a905dcfb7498aa3b09335afa0203"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/Helmsman/Views/Tunnels/TunnelManagerView.swift": {
+    "mtime": 1779282240.1574981,
+    "ast_hash": "83bf5466ab112fe2f507894db84ba57f",
+    "semantic_hash": "83bf5466ab112fe2f507894db84ba57f"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/KubeKit/KubeConfigParser.swift": {
+    "mtime": 1777897467.893603,
+    "ast_hash": "c7a8b43017ee0d846e7db0a98bed622b",
+    "semantic_hash": "c7a8b43017ee0d846e7db0a98bed622b"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/KubeKit/KubeContext.swift": {
+    "mtime": 1777896035.3055284,
+    "ast_hash": "f58ea1d6ac5d64153ff3e9a4f03a58ad",
+    "semantic_hash": "f58ea1d6ac5d64153ff3e9a4f03a58ad"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/KubeKit/SnippetLibrary.swift": {
+    "mtime": 1777896108.0207276,
+    "ast_hash": "01b3a9c63d67374ed785b87e287f2a9f",
+    "semantic_hash": "01b3a9c63d67374ed785b87e287f2a9f"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/NetScanKit/NetworkScanner.swift": {
+    "mtime": 1777897427.0194852,
+    "ast_hash": "a375d33778d6c381b413ec73fd1edc60",
+    "semantic_hash": "a375d33778d6c381b413ec73fd1edc60"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/NetScanKit/ScanResult.swift": {
+    "mtime": 1777896125.8180861,
+    "ast_hash": "5048bdd30bb22227ed24f14dccf4d716",
+    "semantic_hash": "5048bdd30bb22227ed24f14dccf4d716"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/SSHKit/ProxyJumpChain.swift": {
+    "mtime": 1777895924.3261251,
+    "ast_hash": "1f85935163aba62cb2b1194944cd170f",
+    "semantic_hash": "1f85935163aba62cb2b1194944cd170f"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/SSHKit/SSHConfigParser.swift": {
+    "mtime": 1777895893.2773473,
+    "ast_hash": "7c2dea7c08be9eafe2fb9849250cfbde",
+    "semantic_hash": "7c2dea7c08be9eafe2fb9849250cfbde"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/SSHKit/SSHSessionDescriptor.swift": {
+    "mtime": 1777895953.1920638,
+    "ast_hash": "2d5ef05ea81f31bc4d9eed00f733ac1c",
+    "semantic_hash": "2d5ef05ea81f31bc4d9eed00f733ac1c"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/TerminalKit/LocalProcessViewRepresentable.swift": {
+    "mtime": 1779267444.6377077,
+    "ast_hash": "b173492a36b1876558957eaac99cef9b",
+    "semantic_hash": "b173492a36b1876558957eaac99cef9b"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/TerminalKit/TerminalSession.swift": {
+    "mtime": 1779275182.7334168,
+    "ast_hash": "53ba644aad65535f835d213f9be61865",
+    "semantic_hash": "53ba644aad65535f835d213f9be61865"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/TerminalKit/TranscriptWriter.swift": {
+    "mtime": 1779282283.4820325,
+    "ast_hash": "3f1d768c7a61778d822263e9716f786c",
+    "semantic_hash": "3f1d768c7a61778d822263e9716f786c"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/VaultKit/CredentialKind.swift": {
+    "mtime": 1779282240.2157562,
+    "ast_hash": "2cb35b9e8d7b8e45d8cbe84a5d249978",
+    "semantic_hash": "2cb35b9e8d7b8e45d8cbe84a5d249978"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/VaultKit/Keychain.swift": {
+    "mtime": 1779282283.4538302,
+    "ast_hash": "b02d3ed46df0d515bb37c3db556fc00b",
+    "semantic_hash": "b02d3ed46df0d515bb37c3db556fc00b"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Sources/VaultKit/TouchIDAuth.swift": {
+    "mtime": 1779282283.452794,
+    "ast_hash": "881f37212b4f8ff0b3df01c1b816b818",
+    "semantic_hash": "881f37212b4f8ff0b3df01c1b816b818"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Tests/KubeKitTests/KubeConfigParserTests.swift": {
+    "mtime": 1777896877.6134198,
+    "ast_hash": "da797b02f149949b9f4c683cafa65831",
+    "semantic_hash": "da797b02f149949b9f4c683cafa65831"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Tests/SSHKitTests/ProxyJumpTests.swift": {
+    "mtime": 1777896842.8514624,
+    "ast_hash": "ee613db0ba0c44e12139ae046c129f46",
+    "semantic_hash": "ee613db0ba0c44e12139ae046c129f46"
+  },
+  "/Users/btoledan/Desktop/Helmsman/Tests/SSHKitTests/SSHConfigParserTests.swift": {
+    "mtime": 1777896811.448256,
+    "ast_hash": "9e229eb2b39bd3f72bfe9c174c4e1a33",
+    "semantic_hash": "9e229eb2b39bd3f72bfe9c174c4e1a33"
+  },
+  "/Users/btoledan/Desktop/Helmsman/scripts/build-dmg.sh": {
+    "mtime": 1777895814.37743,
+    "ast_hash": "cd5607184726f6d0202898e91b47297a",
+    "semantic_hash": "cd5607184726f6d0202898e91b47297a"
+  },
+  "/Users/btoledan/Desktop/Helmsman/scripts/notarize.sh": {
+    "mtime": 1777895821.725961,
+    "ast_hash": "283c3f0abc065d857942bd15ed726ef5",
+    "semantic_hash": "283c3f0abc065d857942bd15ed726ef5"
+  },
+  "/Users/btoledan/Desktop/Helmsman/test.sh": {
+    "mtime": 1779191759.9549596,
+    "ast_hash": "fd191d387a0ca5a0a849599c51d885de",
+    "semantic_hash": "fd191d387a0ca5a0a849599c51d885de"
+  },
+  "/Users/btoledan/Desktop/Helmsman/test.swift": {
+    "mtime": 1779191737.2118995,
+    "ast_hash": "97da5ac1e10c827b57beb054adf6ec07",
+    "semantic_hash": "97da5ac1e10c827b57beb054adf6ec07"
+  },
+  "/Users/btoledan/Desktop/Helmsman/test_bash.swift": {
+    "mtime": 1779191892.1500793,
+    "ast_hash": "3fe67779277555a0abb7894e1122daa5",
+    "semantic_hash": "3fe67779277555a0abb7894e1122daa5"
+  },
+  "/Users/btoledan/Desktop/Helmsman/test_kubectl.sh": {
+    "mtime": 1779191845.3667722,
+    "ast_hash": "5199df0d2b06431f5d9d2a8d9f3b20fe",
+    "semantic_hash": "5199df0d2b06431f5d9d2a8d9f3b20fe"
+  },
+  "/Users/btoledan/Desktop/Helmsman/test_newlines.swift": {
+    "mtime": 1779191924.7667565,
+    "ast_hash": "cd028b6b9a75f8e8ecf6e40f70128f54",
+    "semantic_hash": "cd028b6b9a75f8e8ecf6e40f70128f54"
+  },
+  "/Users/btoledan/Desktop/Helmsman/test_parser.swift": {
+    "mtime": 1779191789.4406211,
+    "ast_hash": "9127b1b7bd75ba3dedc71df9ad56e72a",
+    "semantic_hash": "9127b1b7bd75ba3dedc71df9ad56e72a"
+  },
+  "/Users/btoledan/Desktop/Helmsman/test_ssh.sh": {
+    "mtime": 1779191882.0465498,
+    "ast_hash": "dbc952c2a1dcda125bb06fa69c9d2a20",
+    "semantic_hash": "dbc952c2a1dcda125bb06fa69c9d2a20"
+  },
+  "/Users/btoledan/Desktop/Helmsman/.claude/CLAUDE.md": {
+    "mtime": 1781002753.9590738,
+    "ast_hash": "db73b0edd7ffbc61ceac177130730865",
+    "semantic_hash": "db73b0edd7ffbc61ceac177130730865"
+  },
+  "/Users/btoledan/Desktop/Helmsman/.claude/skills/graphify/SKILL.md": {
+    "mtime": 1781002753.9580815,
+    "ast_hash": "41f700d6535cc2f2b6b6d0a9eecc7525",
+    "semantic_hash": "41f700d6535cc2f2b6b6d0a9eecc7525"
+  },
+  "/Users/btoledan/Desktop/Helmsman/.claude/skills/graphify/references/add-watch.md": {
+    "mtime": 1781002750.675071,
+    "ast_hash": "0df0589623217ca38a12bdcabfb42f4c",
+    "semantic_hash": "0df0589623217ca38a12bdcabfb42f4c"
+  },
+  "/Users/btoledan/Desktop/Helmsman/.claude/skills/graphify/references/exports.md": {
+    "mtime": 1781002750.6752188,
+    "ast_hash": "7fb1a81aca17a462db70684a324fcfb0",
+    "semantic_hash": "7fb1a81aca17a462db70684a324fcfb0"
+  },
+  "/Users/btoledan/Desktop/Helmsman/.claude/skills/graphify/references/extraction-spec.md": {
+    "mtime": 1781002750.6754272,
+    "ast_hash": "24808b03abfeaf5f6435bb69c0125b2c",
+    "semantic_hash": "24808b03abfeaf5f6435bb69c0125b2c"
+  },
+  "/Users/btoledan/Desktop/Helmsman/.claude/skills/graphify/references/github-and-merge.md": {
+    "mtime": 1781002750.6755767,
+    "ast_hash": "cde13df085e4c492aeb7ba298a996d0d",
+    "semantic_hash": "cde13df085e4c492aeb7ba298a996d0d"
+  },
+  "/Users/btoledan/Desktop/Helmsman/.claude/skills/graphify/references/hooks.md": {
+    "mtime": 1781002750.6758485,
+    "ast_hash": "3f545db6ce646650bb9de588f5512a27",
+    "semantic_hash": "3f545db6ce646650bb9de588f5512a27"
+  },
+  "/Users/btoledan/Desktop/Helmsman/.claude/skills/graphify/references/query.md": {
+    "mtime": 1781002750.6761117,
+    "ast_hash": "8b40ed8c9e9060fc215219a8fc964091",
+    "semantic_hash": "8b40ed8c9e9060fc215219a8fc964091"
+  },
+  "/Users/btoledan/Desktop/Helmsman/.claude/skills/graphify/references/transcribe.md": {
+    "mtime": 1781002750.6762815,
+    "ast_hash": "70f6aa30d6211f3a2c7e9fc45479f50c",
+    "semantic_hash": "70f6aa30d6211f3a2c7e9fc45479f50c"
+  },
+  "/Users/btoledan/Desktop/Helmsman/.claude/skills/graphify/references/update.md": {
+    "mtime": 1781002750.6765487,
+    "ast_hash": "0dad167a95bdb389f02fecffb60b1bc8",
+    "semantic_hash": "0dad167a95bdb389f02fecffb60b1bc8"
+  },
+  "/Users/btoledan/Desktop/Helmsman/.github/workflows/build.yml": {
+    "mtime": 1777895806.2597113,
+    "ast_hash": "95bba91c9b31f6059f634aca32f47104",
+    "semantic_hash": "95bba91c9b31f6059f634aca32f47104"
+  },
+  "/Users/btoledan/Desktop/Helmsman/.swiftlint.yml": {
+    "mtime": 1777895787.6706686,
+    "ast_hash": "53a67f6793f32f92ff9e11657b80af8d",
+    "semantic_hash": "53a67f6793f32f92ff9e11657b80af8d"
+  },
+  "/Users/btoledan/Desktop/Helmsman/CLAUDE.md": {
+    "mtime": 1781002753.9595456,
+    "ast_hash": "82efb97a359f5c7290bf2513d14686be",
+    "semantic_hash": "82efb97a359f5c7290bf2513d14686be"
+  },
+  "/Users/btoledan/Desktop/Helmsman/README.md": {
+    "mtime": 1780404223.1548712,
+    "ast_hash": "4934f2eb2c26d52cf4b64ba547562fd2",
+    "semantic_hash": "4934f2eb2c26d52cf4b64ba547562fd2"
+  },
+  "/Users/btoledan/Desktop/Helmsman/project.yml": {
+    "mtime": 1779282259.1381636,
+    "ast_hash": "9d4318b66560a9cff0df7550650e9828",
+    "semantic_hash": "9d4318b66560a9cff0df7550650e9828"
+  }
+}

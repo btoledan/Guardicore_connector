@@ -42,7 +42,7 @@ enum ClusterHealthStatus: String, CaseIterable {
         case .policySyncPending:
             return "Agent policy revision does not match the Calico CRD revision. Rules may not yet be enforced at the dataplane."
         case .agentProblem:
-            return "One or more Guardicore agents are not running or gc-kube-enforce is down."
+            return "One or more Guardicore agents are not running, gc-kube-enforce is down, or gc-kube-inventory is down."
         case .cniProblem:
             return "Block rules exist but are missing 'action: Deny' in Calico CRDs. Traffic may not be blocked."
         }
@@ -105,6 +105,12 @@ struct ClusterSnapshot {
         if let ke = ds.kubeEnforceReady?.lowercased(), !ke.contains("running") && ke != "1/1" {
             return .agentProblem
         }
+        if let inv = ds.kubeInventoryReady?.lowercased(), !inv.hasPrefix("1/1"), inv != "1/1" {
+            return .agentProblem
+        }
+        if ds.inventoryPods.contains(where: { $0.status.lowercased() != "running" }) {
+            return .agentProblem
+        }
 
         let blockWithoutDeny = s.policies.calicoPolicies.filter {
             $0.isBlock && !$0.hasDeny
@@ -141,6 +147,13 @@ struct ClusterSnapshot {
         }
         if let ke = ds.kubeEnforceReady?.lowercased(), !ke.contains("running") && ke != "1/1" {
             findings.append("gc-kube-enforce is not ready: \(ds.kubeEnforceReady ?? "unknown").")
+        }
+        if let inv = ds.kubeInventoryReady?.lowercased(), !inv.hasPrefix("1/1"), inv != "1/1" {
+            findings.append("gc-kube-inventory is not ready: \(ds.kubeInventoryReady ?? "unknown").")
+        }
+        let badInventory = ds.inventoryPods.filter { $0.status.lowercased() != "running" }
+        if !badInventory.isEmpty {
+            findings.append("\(badInventory.count) gc-kube-inventory pod(s) are not Running.")
         }
 
         if s.blockRulesMissingDeny > 0 {
@@ -209,6 +222,7 @@ struct ClusterPod: Identifiable, Hashable, Codable {
     var isSystem: Bool { namespace == "kube-system" }
     var isDaemonSetAgent: Bool { isGC && name.contains("gc-agents-daemonset") }
     var isKubeEnforce: Bool { isGC && name.contains("gc-kube-enforce") }
+    var isKubeInventory: Bool { isGC && name.hasPrefix("gc-kube-inventory") }
 
     var isFullyReady: Bool {
         let p = ready.split(separator: "/")
@@ -253,9 +267,22 @@ struct GuardicoreSnapshot {
     var daemonSetAvailable: Int?
     var kubeEnforceReady: String?
     var kubeEnforceNode: String?
+    var kubeInventoryReady: String?
+    var inventoryPods: [GuardicoreInventoryPod]
     var agents: [GuardicoreAgent]
     var eventsTail: String
     var kubeEnforceLogTail: String
+    var kubeInventoryLogTail: String
+}
+
+struct GuardicoreInventoryPod: Identifiable, Hashable, Codable {
+    var id: String { podName }
+    var podName: String
+    var node: String
+    var ip: String
+    var status: String
+    var restarts: Int
+    var ready: String
 }
 
 struct GuardicoreAgent: Identifiable, Hashable, Codable {
@@ -317,6 +344,7 @@ struct RawClusterOutputs {
     var guardicorePodsJSON: String = ""
     var daemonSetJSON: String = ""
     var deploymentsJSON: String = ""
+    var statefulSetsJSON: String = ""
     var calicoPoliciesJSON: String = ""
     var nodesWide: String = ""
     var nodesLabels: String = ""
@@ -326,6 +354,7 @@ struct RawClusterOutputs {
     var deployments: String = ""
     var events: String = ""
     var kubeEnforceLogs: String = ""
+    var kubeInventoryLogs: String = ""
     var standardNetworkPolicies: String = ""
     var calicoPoliciesList: String = ""
     var calicoRevisionGrep: String = ""
@@ -339,6 +368,7 @@ struct RawClusterOutputs {
         case "guardicorePodsJSON": return guardicorePodsJSON
         case "daemonSetJSON": return daemonSetJSON
         case "deploymentsJSON": return deploymentsJSON
+        case "statefulSetsJSON": return statefulSetsJSON
         case "calicoPoliciesJSON": return calicoPoliciesJSON
         case "nodesWide": return nodesWide
         case "nodesLabels": return nodesLabels
@@ -348,6 +378,7 @@ struct RawClusterOutputs {
         case "deployments": return deployments
         case "events": return events
         case "kubeEnforceLogs": return kubeEnforceLogs
+        case "kubeInventoryLogs": return kubeInventoryLogs
         case "standardNetworkPolicies": return standardNetworkPolicies
         case "calicoPoliciesList": return calicoPoliciesList
         case "calicoRevisionGrep": return calicoRevisionGrep
@@ -363,11 +394,13 @@ struct RawClusterOutputs {
         ("guardicorePodsJSON", "kubectl get pods -n guardicore -o json"),
         ("daemonSetJSON", "kubectl get ds -n guardicore -o json"),
         ("deploymentsJSON", "kubectl get deploy -n guardicore -o json"),
+        ("statefulSetsJSON", "kubectl get sts -n guardicore -o json"),
         ("calicoPoliciesJSON", "Calico CRDs -o json"),
         ("nodesWide", "kubectl get nodes -o wide (fallback)"),
         ("agentPolicyRevisionLogs", "Agent policy revision logs"),
         ("events", "kubectl get events -n guardicore"),
         ("kubeEnforceLogs", "gc-kube-enforce logs"),
+        ("kubeInventoryLogs", "gc-kube-inventory logs"),
         ("standardNetworkPolicies", "networkpolicies.networking.k8s.io"),
         ("calicoPoliciesList", "networkpolicies.crd.projectcalico.org (text)"),
         ("calicoRevisionGrep", "Calico revision annotations (text)"),
@@ -448,6 +481,19 @@ enum ClusterSnapshotParser {
                 policyRevision: rev?.policyRevision,
                 dcInventoryRevision: rev?.dcInventory,
                 lastPolicyReceived: rev?.lastLine
+            )
+        }
+    }
+
+    static func parseGuardicoreInventoryPods(pods: [ClusterPod]) -> [GuardicoreInventoryPod] {
+        pods.filter(\.isKubeInventory).map { pod in
+            GuardicoreInventoryPod(
+                podName: pod.name,
+                node: pod.node,
+                ip: pod.ip,
+                status: pod.status,
+                restarts: pod.restarts,
+                ready: pod.ready
             )
         }
     }

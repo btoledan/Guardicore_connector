@@ -1,4 +1,4 @@
-# Helmsman SwiftLint Configuration
+/gr# Helmsman SwiftLint Configuration
 disabled_rules:
   - trailing_whitespace       # handled by editor
   - line_length               # long lines acceptable in complex SSH/Kube logic

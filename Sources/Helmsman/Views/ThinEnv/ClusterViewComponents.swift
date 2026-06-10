@@ -88,12 +88,14 @@ struct ClusterTerminalActionButton: View {
     let label: String
     let command: String
     let session: TerminalSession
+    var onRun: (() -> Void)? = nil
     @State private var didRun = false
 
     var body: some View {
         Button {
             session.run(command)
             didRun = true
+            onRun?()
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { didRun = false }
         } label: {
             HStack(spacing: 6) {

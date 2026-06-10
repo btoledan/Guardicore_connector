@@ -116,7 +116,16 @@ struct ClusterControlPanelView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     switch selectedTab {
                     case .overview:
-                        ClusterOverviewView(snapshot: snapshot, session: session)
+                        ClusterOverviewView(
+                            snapshot: snapshot,
+                            session: session,
+                            onQuickActionRun: {
+                                // Debounce refresh ~1.5s after quick action runs
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                    Task { await viewModel.refresh() }
+                                }
+                            }
+                        )
                     case .topology:
                         ClusterTopologyView(snapshot: snapshot, session: session)
                     case .guardicore:

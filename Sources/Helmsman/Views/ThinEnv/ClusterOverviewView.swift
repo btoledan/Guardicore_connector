@@ -7,6 +7,7 @@ import TerminalKit
 struct ClusterOverviewView: View {
     let snapshot: ClusterSnapshot
     let session: TerminalSession
+    var onQuickActionRun: (() -> Void)? = nil
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
@@ -58,7 +59,7 @@ struct ClusterOverviewView: View {
                 }
 
                 // ── Quick actions ─────────────────────────────────
-                QuickActionsCard(snapshot: snapshot, session: session)
+                QuickActionsCard(snapshot: snapshot, session: session, onRun: onQuickActionRun)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 10)
@@ -330,6 +331,10 @@ private struct GuardicoreSectionCard: View {
         guard let k = ds.kubeEnforceReady?.lowercased() else { return .secondary }
         return k.contains("1/1") || k.contains("running") ? .green : .orange
     }
+    private var inventoryColor: Color {
+        guard let k = ds.kubeInventoryReady?.lowercased() else { return .secondary }
+        return k.hasPrefix("1/1") || k == "1/1" ? .green : .orange
+    }
 
     var body: some View {
         SectionCard(title: "Guardicore", icon: "shield.checkered") {
@@ -349,6 +354,14 @@ private struct GuardicoreSectionCard: View {
                     ok: enforceColor == .green,
                     action: { session.run("kubectl get deploy -n guardicore") }
                 )
+                Divider().padding(.leading, 10).opacity(0.3)
+                // gc-kube-inventory row
+                CheckRow(
+                    label: "gc-kube-inventory",
+                    value: ds.kubeInventoryReady ?? inventoryPodValue,
+                    ok: inventoryColor == .green && inventoryPodsOK,
+                    action: { session.run("kubectl get sts -n guardicore") }
+                )
                 // Agent policy revisions
                 if !ds.agents.isEmpty {
                     Divider().padding(.leading, 10).opacity(0.3)
@@ -365,6 +378,14 @@ private struct GuardicoreSectionCard: View {
     private var daemonSetOK: Bool {
         if let r = ds.daemonSetReady, let d = ds.daemonSetDesired { return r == d }
         return !ds.agents.isEmpty
+    }
+    private var inventoryPodValue: String {
+        guard !ds.inventoryPods.isEmpty else { return "—" }
+        let running = ds.inventoryPods.filter { $0.status.lowercased() == "running" }.count
+        return "\(running)/\(ds.inventoryPods.count) running"
+    }
+    private var inventoryPodsOK: Bool {
+        !ds.inventoryPods.isEmpty && ds.inventoryPods.allSatisfy { $0.status.lowercased() == "running" }
     }
 }
 
@@ -552,37 +573,92 @@ private struct PolicyHealthCard: View {
 
 // MARK: - Quick actions card
 
+private struct QuickAction: Identifiable {
+    let id: String
+    let label: String
+    let command: String
+    let isCustom: Bool
+}
+
 private struct QuickActionsCard: View {
     let snapshot: ClusterSnapshot
     let session: TerminalSession
+    var onRun: (() -> Void)? = nil
+
+    @AppStorage(ClusterCustomCommandsStorage.appStorageKey)
+    private var customCommandsBlob: String = ""
+    
+    @AppStorage("gardicol.hiddenQuickActions")
+    private var hiddenActionsBlob: String = ""
+
+    @State private var showAddPopover = false
+    @State private var newCommandInput = ""
+
+    private var builtInActions: [QuickAction] {
+        let hidden = Set(hiddenActionsBlob.split(separator: "\n").map(String.init))
+        return ClusterCommands.quickActionBuiltIns.enumerated().compactMap { idx, cmd in
+            guard !hidden.contains(cmd) else { return nil }
+            return QuickAction(id: "qa-\(idx)", label: cmd, command: cmd, isCustom: false)
+        }
+    }
+
+    private var allActions: [QuickAction] {
+        builtInActions + customActions
+    }
+
+    private var customActions: [QuickAction] {
+        ClusterCustomCommandsStorage.parse(customCommandsBlob).map { cmd in
+            QuickAction(id: "custom-\(cmd)", label: cmd, command: cmd, isCustom: true)
+        }
+    }
 
     var body: some View {
-        SectionCard(title: "Quick Actions", icon: "terminal") {
+        SectionCard(title: "Quick Actions", icon: "terminal", trailing: {
+            Button {
+                showAddPopover = true
+            } label: {
+                Image(systemName: "plus")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundColor(.secondary)
+            }
+            .buttonStyle(.plain)
+            .help("Add a custom quick action")
+            .popover(isPresented: $showAddPopover, arrowEdge: .top) {
+                QuickActionAddPopover(
+                    input: $newCommandInput,
+                    onSave: addCustomCommand,
+                    onCancel: {
+                        newCommandInput = ""
+                        showAddPopover = false
+                    }
+                )
+            }
+        }, content: {
             VStack(spacing: 4) {
-                ClusterTerminalActionButton(
-                    label: "kubectl get nodes -o wide",
-                    command: "kubectl get nodes -o wide",
-                    session: session
-                )
-                ClusterTerminalActionButton(
-                    label: "kubectl get pods -n guardicore -o wide",
-                    command: "kubectl get pods -n guardicore -o wide",
-                    session: session
-                )
-                ClusterTerminalActionButton(
-                    label: "Calico NetworkPolicies -A",
-                    command: "kubectl get networkpolicies.crd.projectcalico.org -A",
-                    session: session
-                )
-                ClusterTerminalActionButton(
-                    label: "kubectl get events -n guardicore",
-                    command: "kubectl get events -n guardicore --sort-by=.lastTimestamp",
-                    session: session
-                )
+                ForEach(allActions) { action in
+                    HStack(spacing: 6) {
+                        ClusterTerminalActionButton(
+                            label: action.label,
+                            command: action.command,
+                            session: session,
+                            onRun: onRun
+                        )
+                        
+                        Button {
+                            deleteAction(action)
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+                        .buttonStyle(.plain)
+                        .help("Remove this quick action")
+                    }
+                }
             }
             .padding(.horizontal, 10)
             .padding(.vertical, 8)
-        }
+        })
 
         if let version = snapshot.version {
             Text(version)
@@ -591,13 +667,66 @@ private struct QuickActionsCard: View {
                 .padding(.top, 2)
         }
     }
+
+    private func addCustomCommand() {
+        let cmd = newCommandInput.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cmd.isEmpty else { return }
+        customCommandsBlob = ClusterCustomCommandsStorage.appending(cmd, to: customCommandsBlob)
+        newCommandInput = ""
+        showAddPopover = false
+    }
+
+    private func removeCustomCommand(_ cmd: String) {
+        customCommandsBlob = ClusterCustomCommandsStorage.removing(cmd, from: customCommandsBlob)
+    }
+    
+    private func deleteAction(_ action: QuickAction) {
+        if action.isCustom {
+            customCommandsBlob = ClusterCustomCommandsStorage.removing(action.command, from: customCommandsBlob)
+        } else {
+            // Hide built-in action by adding to hidden list
+            var hidden = Set(hiddenActionsBlob.split(separator: "\n").map(String.init))
+            hidden.insert(action.command)
+            hiddenActionsBlob = hidden.sorted().joined(separator: "\n")
+        }
+    }
+}
+
+private struct QuickActionAddPopover: View {
+    @Binding var input: String
+    let onSave: () -> Void
+    let onCancel: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Add Quick Action")
+                .font(.headline)
+            Text("Saved commands appear here and in the Commands tab.")
+                .font(.caption)
+                .foregroundColor(.secondary)
+            TextField("kubectl …", text: $input)
+                .textFieldStyle(.roundedBorder)
+                .font(.caption.monospaced())
+                .onSubmit(onSave)
+            HStack {
+                Spacer()
+                Button("Cancel", action: onCancel)
+                Button("Save", action: onSave)
+                    .keyboardShortcut(.defaultAction)
+                    .disabled(input.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            }
+        }
+        .padding(14)
+        .frame(width: 340)
+    }
 }
 
 // MARK: - Shared sub-components
 
-private struct SectionCard<Content: View>: View {
+private struct SectionCard<Content: View, Trailing: View>: View {
     let title: String
     let icon: String
+    @ViewBuilder let trailing: () -> Trailing
     @ViewBuilder let content: () -> Content
 
     var body: some View {
@@ -610,6 +739,8 @@ private struct SectionCard<Content: View>: View {
                     .font(.caption2.weight(.semibold))
                     .foregroundColor(.secondary)
                     .kerning(0.5)
+                Spacer(minLength: 0)
+                trailing()
             }
             .padding(.horizontal, 10)
             .padding(.top, 9)
@@ -621,6 +752,15 @@ private struct SectionCard<Content: View>: View {
         .background(AppTheme.surface.card)
         .cornerRadius(10)
         .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Color.secondary.opacity(0.15), lineWidth: 1))
+    }
+}
+
+private extension SectionCard where Trailing == EmptyView {
+    init(title: String, icon: String, @ViewBuilder content: @escaping () -> Content) {
+        self.title = title
+        self.icon = icon
+        self.trailing = { EmptyView() }
+        self.content = content
     }
 }
 

@@ -6,50 +6,13 @@ import TerminalKit
 struct ClusterCommandsView: View {
     let session: TerminalSession
 
-    @AppStorage("gardicol.clusterCustomCommands")
+    @AppStorage(ClusterCustomCommandsStorage.appStorageKey)
     private var customCommandsBlob: String = ""
     @State private var customCommandInput = ""
 
-    private let commandGroups: [(title: String, icon: String, commands: [String])] = [
-        ("Quick Status", "bolt.fill", [
-            "kubectl get nodes -o wide",
-            "kubectl get pods -n guardicore -o wide",
-            "kubectl get pods -A | grep -vE '^(NAMESPACE|.*Running|.*Completed)'",
-        ]),
-        ("Cluster Triage", "magnifyingglass", [
-            "kubectl version --short 2>/dev/null || kubectl version",
-            "kubectl get nodes -o wide",
-            "kubectl get nodes --show-labels",
-            "kubectl get pods -n kube-system -o wide",
-            "kubectl get ns",
-            "kubectl get pods -A | grep -vE '^(NAMESPACE|.*Running|.*Completed)'",
-        ]),
-        ("Guardicore System", "shield.lefthalf.filled", [
-            "kubectl get pods -n guardicore -o wide",
-            "kubectl get ds -n guardicore",
-            "kubectl get deploy -n guardicore",
-            "kubectl describe ds gc-agents-daemonset -n guardicore",
-            "kubectl get events -n guardicore --sort-by='.lastTimestamp' | tail -30",
-            "kubectl logs -n guardicore deploy/gc-kube-enforce --tail=80",
-        ]),
-        ("Policy / CNI", "network", [
-            "kubectl get networkpolicies.networking.k8s.io -A",
-            "kubectl get networkpolicies.crd.projectcalico.org -A",
-        ]),
-        ("Agent Debug", "ant.fill", [
-            "for pod in $(kubectl get pods -n guardicore -o name | grep daemonset); do echo \"=== $pod ===\"; kubectl exec -n guardicore $pod -- sh -c \"grep -i 'Policy revision' /var/log/gc-enforcement-policy.log 2>/dev/null | tail -3\"; done",
-            "for pod in $(kubectl get pods -n guardicore -o name | grep daemonset); do echo \"=== $pod ===\"; kubectl exec -n guardicore $pod -- sh -c \"grep -i 'enforcement policy' /var/log/gc-enforcement-agent.log 2>/dev/null | tail -2\"; done",
-        ]),
-        ("Quick Health", "heart.fill", [
-            "kubectl get nodes -o wide",
-            "kubectl get pods -A | grep -vE '^(NAMESPACE|.*Running|.*Completed)'",
-            "kubectl get componentstatuses 2>/dev/null || kubectl get --raw /readyz?verbose",
-        ]),
-    ]
-
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            ForEach(commandGroups, id: \.title) { group in
+            ForEach(ClusterCommands.allCommandGroups, id: \.title) { group in
                 ClusterCommandGroupView(
                     title: group.title,
                     icon: group.icon,
@@ -86,22 +49,21 @@ struct ClusterCommandsView: View {
     }
 
     private var customCommandsList: [String] {
-        customCommandsBlob.split(separator: "\n").map(String.init)
-            .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
+        ClusterCustomCommandsStorage.parse(customCommandsBlob)
     }
 
     private func addCustomCommand() {
         let cmd = customCommandInput.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !cmd.isEmpty, !customCommandsList.contains(cmd) else {
+        guard !cmd.isEmpty else {
             customCommandInput = ""
             return
         }
-        customCommandsBlob = (customCommandsList + [cmd]).joined(separator: "\n")
+        customCommandsBlob = ClusterCustomCommandsStorage.appending(cmd, to: customCommandsBlob)
         customCommandInput = ""
     }
 
     private func removeCustomCommand(_ cmd: String) {
-        customCommandsBlob = customCommandsList.filter { $0 != cmd }.joined(separator: "\n")
+        customCommandsBlob = ClusterCustomCommandsStorage.removing(cmd, from: customCommandsBlob)
     }
 }
 

@@ -75,10 +75,12 @@ final class ClusterViewModel: ObservableObject {
                 ("guardicorePodsJSON", "kubectl get pods -n guardicore -o json", 20),
                 ("daemonSetJSON", "kubectl get ds -n guardicore -o json", 20),
                 ("deploymentsJSON", "kubectl get deploy -n guardicore -o json", 20),
+                ("statefulSetsJSON", "kubectl get sts -n guardicore -o json", 20),
                 ("calicoPoliciesJSON", "kubectl get networkpolicies.crd.projectcalico.org -A -o json", 25),
                 ("nodesLabels", "kubectl get nodes --show-labels", 25),
                 ("events", "kubectl get events -n guardicore --sort-by='.lastTimestamp' | tail -30", 25),
                 ("kubeEnforceLogs", "kubectl logs -n guardicore deploy/gc-kube-enforce --tail=80", 30),
+                ("kubeInventoryLogs", "POD=$(kubectl get pods -n guardicore -o name 2>/dev/null | grep gc-kube-inventory | head -1 | sed 's|pod/||'); [ -n \"$POD\" ] && kubectl logs -n guardicore \"$POD\" --tail=80 || true", 30),
                 ("standardNetworkPolicies", "kubectl get networkpolicies.networking.k8s.io -A", 25),
                 ("calicoPoliciesList", "kubectl get networkpolicies.crd.projectcalico.org -A", 25),
                 ("calicoRevisionGrep", calicoRevCmd, 45),
@@ -195,6 +197,7 @@ final class ClusterViewModel: ObservableObject {
             case "guardicorePodsJSON": raw.guardicorePodsJSON = r.output
             case "daemonSetJSON": raw.daemonSetJSON = r.output
             case "deploymentsJSON": raw.deploymentsJSON = r.output
+            case "statefulSetsJSON": raw.statefulSetsJSON = r.output
             case "calicoPoliciesJSON": raw.calicoPoliciesJSON = r.output
             case "nodesWide": raw.nodesWide = r.output
             case "nodesLabels": raw.nodesLabels = r.output
@@ -204,6 +207,7 @@ final class ClusterViewModel: ObservableObject {
             case "deployments": raw.deployments = r.output
             case "events": raw.events = r.output
             case "kubeEnforceLogs": raw.kubeEnforceLogs = r.output
+            case "kubeInventoryLogs": raw.kubeInventoryLogs = r.output
             case "standardNetworkPolicies": raw.standardNetworkPolicies = r.output
             case "calicoPoliciesList": raw.calicoPoliciesList = r.output
             case "calicoRevisionGrep": raw.calicoRevisionGrep = r.output
@@ -253,11 +257,19 @@ final class ClusterViewModel: ObservableObject {
             pods: gcPods.isEmpty ? pods.filter(\.isGC) : gcPods,
             revisionLogs: raw.agentPolicyRevisionLogs
         )
+        let inventoryPods = ClusterSnapshotParser.parseGuardicoreInventoryPods(
+            pods: gcPods.isEmpty ? pods.filter(\.isGC) : gcPods
+        )
         let kubeEnforce = (gcPods.isEmpty ? pods : gcPods).first(where: \.isKubeEnforce)
 
         var deployReady = KubeJSONParser.parseDeploymentJSON(raw.deploymentsJSON)
         if deployReady == nil {
             deployReady = ClusterSnapshotParser.parseDeploymentReady(raw.deployments)
+        }
+
+        var inventoryReady = KubeJSONParser.parseStatefulSetReady(raw.statefulSetsJSON)
+        if inventoryReady == nil {
+            inventoryReady = inventoryPods.first?.ready
         }
 
         return ClusterSnapshot(
@@ -272,9 +284,12 @@ final class ClusterViewModel: ObservableObject {
                 daemonSetAvailable: ds.available,
                 kubeEnforceReady: deployReady ?? kubeEnforce?.ready,
                 kubeEnforceNode: kubeEnforce?.node,
+                kubeInventoryReady: inventoryReady,
+                inventoryPods: inventoryPods,
                 agents: agents,
                 eventsTail: raw.events,
-                kubeEnforceLogTail: raw.kubeEnforceLogs
+                kubeEnforceLogTail: raw.kubeEnforceLogs,
+                kubeInventoryLogTail: raw.kubeInventoryLogs
             ),
             policies: PolicySnapshot(
                 standardNetworkPoliciesRaw: raw.standardNetworkPolicies,

@@ -75,6 +75,7 @@ enum ClusterSnapshotExport {
         | Nodes ready | \(s.nodesReady)/\(s.nodes.count) |
         | GC agents ready | \(s.guardicore.daemonSetReady.map(String.init) ?? "?")/\(s.guardicore.daemonSetDesired.map(String.init) ?? "?") |
         | gc-kube-enforce | \(s.guardicore.kubeEnforceReady ?? "—") |
+        | gc-kube-inventory | \(s.guardicore.kubeInventoryReady ?? "—") |
         | Unhealthy pods | \(s.unhealthyPodCount) |
         | Calico CRDs | \(s.policies.calicoPolicies.count) |
         | Block + Deny | \(s.blockRulesWithDeny) |
@@ -103,6 +104,15 @@ enum ClusterSnapshotExport {
         md += "|-----|------|--------|----------|------------|------------|\n"
         for a in s.guardicore.agents {
             md += "| \(a.podName) | \(a.node) | \(a.status) | \(a.restarts) | \(a.policyRevision.map(String.init) ?? "—") | \(a.dcInventoryRevision ?? "—") |\n"
+        }
+
+        if !s.guardicore.inventoryPods.isEmpty {
+            md += "\n## gc-kube-inventory\n\n"
+            md += "| Pod | Node | IP | Status | Ready | Restarts |\n"
+            md += "|-----|------|----|--------|-------|----------|\n"
+            for pod in s.guardicore.inventoryPods {
+                md += "| \(pod.podName) | \(pod.node) | \(pod.ip) | \(pod.status) | \(pod.ready) | \(pod.restarts) |\n"
+            }
         }
 
         md += "\n## Calico Policies\n\n"

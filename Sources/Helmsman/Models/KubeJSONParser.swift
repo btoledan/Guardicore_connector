@@ -72,6 +72,14 @@ enum KubeJSONParser {
         return "\(ready)/\(desired)"
     }
 
+    static func parseStatefulSetReady(_ output: String, name: String = "gc-kube-inventory") -> String? {
+        guard let list: KubeStatefulSetList = decode(output),
+              let sts = list.items.first(where: { $0.metadata.name == name }) else { return nil }
+        let ready = sts.status?.readyReplicas ?? 0
+        let desired = sts.status?.replicas ?? sts.spec?.replicas ?? 0
+        return "\(ready)/\(desired)"
+    }
+
     static func parseCalicoPoliciesJSON(_ output: String) -> [CalicoPolicy] {
         guard let list: KubeCalicoPolicyList = decode(output) else { return [] }
         return list.items.map { item in
@@ -262,6 +270,18 @@ private struct KubeDeploymentItem: Decodable {
 }
 private struct KubeDeploySpec: Decodable { let replicas: Int? }
 private struct KubeDeployStatus: Decodable {
+    let replicas: Int?
+    let readyReplicas: Int?
+}
+
+private struct KubeStatefulSetList: Decodable { let items: [KubeStatefulSetItem] }
+private struct KubeStatefulSetItem: Decodable {
+    let metadata: KubeMeta
+    let spec: KubeStatefulSetSpec?
+    let status: KubeStatefulSetStatus?
+}
+private struct KubeStatefulSetSpec: Decodable { let replicas: Int? }
+private struct KubeStatefulSetStatus: Decodable {
     let replicas: Int?
     let readyReplicas: Int?
 }
