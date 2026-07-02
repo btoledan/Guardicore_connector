@@ -7,6 +7,13 @@ struct GuardicoreStatusView: View {
     let snapshot: ClusterSnapshot
     let session: TerminalSession
 
+    @State private var logBrowserAgent: GuardicoreAgent?
+    @State private var pendingReset: PendingReset?
+
+    /// CLI tool for this cluster (kubectl, or oc on OpenShift).
+    private var cli: String { session.spec.metadata["guardicoreCLI"] ?? "kubectl" }
+    private let namespace = "guardicore"
+
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             dsSection
@@ -14,6 +21,25 @@ struct GuardicoreStatusView: View {
             kubeInventorySection
             agentsSection
             eventsSection
+        }
+        .sheet(item: $logBrowserAgent) { agent in
+            PodLogBrowserSheet(
+                podName: agent.podName,
+                namespace: namespace,
+                cli: cli,
+                session: session,
+                remoteBase: session.spec.metadata["guardicoreRemoteBase"]
+            )
+        }
+        .alert(item: $pendingReset) { reset in
+            Alert(
+                title: Text(reset.title),
+                message: Text(reset.detail + "\n\n" + reset.command),
+                primaryButton: .destructive(Text(reset.confirmLabel)) {
+                    session.run(reset.command)
+                },
+                secondaryButton: .cancel()
+            )
         }
     }
 
@@ -38,6 +64,20 @@ struct GuardicoreStatusView: View {
                 command: "kubectl describe ds gc-agents-daemonset -n guardicore",
                 session: session
             )
+            Button(role: .destructive) {
+                pendingReset = PendingReset(
+                    title: "Reset Deployment?",
+                    confirmLabel: "Restart All",
+                    detail: "Rolling-restarts every GC agent pod in the DaemonSet.",
+                    command: "\(cli) rollout restart ds/gc-agents-daemonset -n \(namespace)"
+                )
+            } label: {
+                Label("Reset Deployment (rollout restart)", systemImage: "arrow.triangle.2.circlepath")
+                    .font(.caption2)
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+            .tint(.orange)
         }
         .padding(8)
         .background(Color.purple.opacity(0.06))
@@ -193,13 +233,38 @@ struct GuardicoreStatusView: View {
             .foregroundColor(.secondary)
 
             HStack(spacing: 4) {
-                miniAction("shell", "kubectl exec -it \(agent.podName) -n guardicore -- /bin/sh")
+                miniAction("shell", "\(cli) exec -it \(agent.podName) -n \(namespace) -- /bin/sh")
+                miniAction("pod logs", "\(cli) logs -n \(namespace) \(agent.podName) --tail=200")
+                Button {
+                    logBrowserAgent = agent
+                } label: {
+                    Label("logs…", systemImage: "doc.text.magnifyingglass")
+                }
+                .font(.caption2)
+                .buttonStyle(.bordered)
+                .controlSize(.mini)
+            }
+            HStack(spacing: 4) {
                 miniAction("policy log", """
-                kubectl exec -n guardicore \(agent.podName) -- sh -c "grep -i 'Policy revision' /var/log/gc-enforcement-policy.log 2>/dev/null | tail -10"
+                \(cli) exec -n \(namespace) \(agent.podName) -- sh -c "grep -i 'Policy revision' /var/log/gc-enforcement-policy.log 2>/dev/null | tail -10"
                 """)
                 miniAction("verdict", """
-                kubectl exec -n guardicore \(agent.podName) -- sh -c "tail -50 /var/log/gc-k8s-verdict-reporter.log"
+                \(cli) exec -n \(namespace) \(agent.podName) -- sh -c "tail -50 /var/log/gc-k8s-verdict-reporter.log"
                 """)
+                Button(role: .destructive) {
+                    pendingReset = PendingReset(
+                        title: "Restart Pod?",
+                        confirmLabel: "Restart",
+                        detail: "Deletes \(agent.podName); the DaemonSet recreates it automatically.",
+                        command: "\(cli) delete pod \(agent.podName) -n \(namespace)"
+                    )
+                } label: {
+                    Label("restart pod", systemImage: "arrow.clockwise")
+                }
+                .font(.caption2)
+                .buttonStyle(.bordered)
+                .controlSize(.mini)
+                .tint(.orange)
             }
         }
         .padding(8)
@@ -233,4 +298,13 @@ struct GuardicoreStatusView: View {
             }
         }
     }
+}
+
+/// A disruptive action awaiting user confirmation before it runs in the terminal.
+struct PendingReset: Identifiable {
+    let id = UUID()
+    let title: String
+    let confirmLabel: String
+    let detail: String
+    let command: String
 }

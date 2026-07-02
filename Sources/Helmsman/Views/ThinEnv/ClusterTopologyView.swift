@@ -42,6 +42,10 @@ struct ClusterTopologyView: View {
     }
     private var unhealthyPods: Int { snapshot.unhealthyPodCount }
 
+    // GC component placement (which node runs what)
+    private var enforcePods: [ClusterPod]   { snapshot.pods.filter(\.isKubeEnforce) }
+    private var inventoryClusterPods: [ClusterPod] { snapshot.pods.filter(\.isKubeInventory) }
+
     var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
             VStack(alignment: .leading, spacing: 14) {
@@ -54,6 +58,17 @@ struct ClusterTopologyView: View {
                     unhealthy:    unhealthyPods,
                     gcCovered:    gcCoveredNodes,
                     nsCount:      allNamespaces.count
+                )
+
+                // ── Guardicore component placement ─────────────────
+                GuardicorePlacementCard(
+                    agents: snapshot.guardicore.agents,
+                    enforcePods: enforcePods,
+                    inventoryClusterPods: inventoryClusterPods,
+                    inventoryPods: snapshot.guardicore.inventoryPods,
+                    kubeEnforceNode: snapshot.guardicore.kubeEnforceNode,
+                    nodeCount: snapshot.nodes.count,
+                    session: session
                 )
 
                 // ── Namespace colour legend ────────────────────────
@@ -78,6 +93,8 @@ struct ClusterTopologyView: View {
                                     node: node,
                                     pods: snapshot.pods.filter { $0.node == node.name },
                                     agent: snapshot.guardicore.agents.first { $0.node == node.name },
+                                    enforcePods: enforcePods.filter { $0.node == node.name },
+                                    inventoryPods: inventoryClusterPods.filter { $0.node == node.name },
                                     session: session
                                 )
                             }
@@ -96,6 +113,8 @@ struct ClusterTopologyView: View {
                                     node: node,
                                     pods: snapshot.pods.filter { $0.node == node.name },
                                     agent: snapshot.guardicore.agents.first { $0.node == node.name },
+                                    enforcePods: enforcePods.filter { $0.node == node.name },
+                                    inventoryPods: inventoryClusterPods.filter { $0.node == node.name },
                                     session: session
                                 )
                             }
@@ -213,12 +232,205 @@ private struct SectionLabel: View {
     }
 }
 
+// MARK: - Guardicore placement card
+
+/// Shows, at a glance, which node runs each Guardicore control component:
+/// the per-node enforcement DaemonSet agents, gc-kube-enforce, and gc-kube-inventory.
+private struct GuardicorePlacementCard: View {
+    let agents: [GuardicoreAgent]
+    let enforcePods: [ClusterPod]
+    let inventoryClusterPods: [ClusterPod]
+    let inventoryPods: [GuardicoreInventoryPod]
+    let kubeEnforceNode: String?
+    let nodeCount: Int
+    let session: TerminalSession
+
+    /// Enforcement: prefer live pod placement, fall back to single node string.
+    private var enforceRows: [(node: String, status: String, pod: String?)] {
+        if !enforcePods.isEmpty {
+            return enforcePods.map { ($0.node, $0.status, $0.name) }
+        }
+        if let n = kubeEnforceNode, !n.isEmpty {
+            return [(n, "—", nil)]
+        }
+        return []
+    }
+
+    /// Inventory: prefer cluster pods (have node), fall back to parsed inventory pods.
+    private var inventoryRows: [(node: String, status: String, pod: String?)] {
+        if !inventoryClusterPods.isEmpty {
+            return inventoryClusterPods.map { ($0.node, $0.status, $0.name) }
+        }
+        return inventoryPods.map { ($0.node, $0.status, $0.podName) }
+    }
+
+    private var coveredNodes: Int {
+        Set(agents.map(\.node)).count
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 6) {
+                Image(systemName: "shield.lefthalf.filled")
+                    .foregroundColor(.purple)
+                Text("GUARDICORE PLACEMENT")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundColor(.purple)
+                    .kerning(0.8)
+                Spacer()
+                Text("\(coveredNodes)/\(nodeCount) nodes protected")
+                    .font(.caption2)
+                    .foregroundColor(coveredNodes == nodeCount && nodeCount > 0 ? .green : .orange)
+            }
+
+            // Enforcement (DaemonSet agents) — node list
+            PlacementSection(
+                icon: "shield.lefthalf.filled",
+                title: "Enforcement (DaemonSet)",
+                color: .purple,
+                rows: agents.map { ($0.node, $0.status, $0.podName) },
+                emptyText: "No agents found",
+                session: session,
+                namespace: "guardicore"
+            )
+
+            Divider().opacity(0.3)
+
+            // gc-kube-enforce
+            PlacementSection(
+                icon: "lock.shield.fill",
+                title: "gc-kube-enforce",
+                color: .blue,
+                rows: enforceRows,
+                emptyText: "Not detected",
+                session: session,
+                namespace: "guardicore"
+            )
+
+            Divider().opacity(0.3)
+
+            // gc-kube-inventory
+            PlacementSection(
+                icon: "tray.full.fill",
+                title: "gc-kube-inventory",
+                color: .teal,
+                rows: inventoryRows,
+                emptyText: "Not detected",
+                session: session,
+                namespace: "guardicore"
+            )
+        }
+        .padding(12)
+        .background(AppTheme.surface.elevated, in: RoundedRectangle(cornerRadius: 10))
+        .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Color.purple.opacity(0.25), lineWidth: 1))
+    }
+}
+
+private struct PlacementSection: View {
+    let icon: String
+    let title: String
+    let color: Color
+    let rows: [(node: String, status: String, pod: String?)]
+    let emptyText: String
+    let session: TerminalSession
+    let namespace: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 5) {
+                Image(systemName: icon)
+                    .font(.caption2)
+                    .foregroundColor(color)
+                Text(title)
+                    .font(.caption.weight(.semibold))
+                    .foregroundColor(color)
+                Spacer()
+                Text("\(rows.count)")
+                    .font(.caption2.monospaced())
+                    .foregroundColor(.secondary)
+            }
+
+            if rows.isEmpty {
+                Text(emptyText)
+                    .font(.caption2)
+                    .foregroundColor(.red)
+                    .padding(.leading, 18)
+            } else {
+                ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrow.turn.down.right")
+                            .font(.system(size: 8))
+                            .foregroundColor(Color(nsColor: .tertiaryLabelColor))
+                        Circle()
+                            .fill(row.status.lowercased() == "running" ? Color.green :
+                                  row.status == "—" ? Color.secondary : Color.orange)
+                            .frame(width: 6, height: 6)
+                        Image(systemName: "square.stack.3d.up")
+                            .font(.system(size: 9))
+                            .foregroundColor(.secondary)
+                        Text(row.node.isEmpty ? "unknown node" : row.node)
+                            .font(.caption2.monospaced())
+                            .foregroundColor(.primary)
+                            .lineLimit(1)
+                        if row.status != "—" {
+                            Text(row.status)
+                                .font(.caption2)
+                                .foregroundColor(row.status.lowercased() == "running" ? .secondary : .orange)
+                        }
+                        Spacer()
+                        if let pod = row.pod {
+                            Button {
+                                session.run("kubectl logs -n \(namespace) \(pod) --tail=200")
+                            } label: {
+                                Image(systemName: "doc.text")
+                                    .font(.system(size: 9))
+                            }
+                            .buttonStyle(.plain)
+                            .foregroundColor(.secondary)
+                            .help("Tail logs for \(pod)")
+                        }
+                    }
+                    .padding(.leading, 14)
+                }
+            }
+        }
+    }
+}
+
+// MARK: - GC component chip
+
+private struct GCComponentChip: View {
+    let icon: String
+    let label: String
+    let color: Color
+    let running: Bool
+
+    var body: some View {
+        HStack(spacing: 3) {
+            Image(systemName: icon)
+                .font(.system(size: 8))
+            Text(label)
+                .font(.system(size: 9, weight: .medium))
+            Circle()
+                .fill(running ? Color.green : Color.orange)
+                .frame(width: 4, height: 4)
+        }
+        .padding(.horizontal, 6)
+        .padding(.vertical, 3)
+        .background(color.opacity(0.12))
+        .foregroundColor(color)
+        .cornerRadius(4)
+    }
+}
+
 // MARK: - Node card
 
 private struct TopoNodeCard: View {
     let node: ClusterNode
     let pods: [ClusterPod]
     let agent: GuardicoreAgent?
+    var enforcePods: [ClusterPod] = []
+    var inventoryPods: [ClusterPod] = []
     let session: TerminalSession
 
     @State private var expanded = true
@@ -346,6 +558,33 @@ private struct TopoNodeCard: View {
                 .padding(.horizontal, 10)
                 .padding(.vertical, 7)
                 .background(Color.red.opacity(0.05))
+            }
+
+            // ── GC control components on this node (enforce / inventory) ──
+            if !enforcePods.isEmpty || !inventoryPods.isEmpty {
+                Divider().opacity(0.4)
+                HStack(spacing: 6) {
+                    ForEach(enforcePods) { pod in
+                        GCComponentChip(
+                            icon: "lock.shield.fill",
+                            label: "enforce",
+                            color: .blue,
+                            running: pod.status.lowercased() == "running"
+                        )
+                    }
+                    ForEach(inventoryPods) { pod in
+                        GCComponentChip(
+                            icon: "tray.full.fill",
+                            label: "inventory",
+                            color: .teal,
+                            running: pod.status.lowercased() == "running"
+                        )
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 6)
+                .background(Color.blue.opacity(0.03))
             }
 
             // ── Pod namespaces (collapsible) ──────────────────────

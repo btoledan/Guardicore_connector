@@ -35,6 +35,11 @@ struct TerminalTabsView: View {
                                     ClusterControlPanelView(session: tab)
                                         .frame(width: 400)
                                         .transition(.move(edge: .trailing))
+                                } else if isActive && isAggregatorTab(tab) {
+                                    Divider()
+                                    AggregatorControlPanelView(session: tab)
+                                        .frame(width: 400)
+                                        .transition(.move(edge: .trailing))
                                 } else if isActive && activeTerminals.showSFTPPane {
                                     Divider()
                                     SFTPPaneView(session: tab)
@@ -68,6 +73,7 @@ struct TerminalTabsView: View {
     // MARK: - Tab bar
 
     private func isClusterTab(_ tab: TerminalSession) -> Bool {
+        if tab.spec.metadata["guardicoreTarget"] == "aggregator" { return false }
         if tab.spec.metadata["guardicoreTarget"] == "cluster" { return true }
         if tab.spec.metadata["guardicoreStatusCommand"] != nil { return true }
 
@@ -75,6 +81,10 @@ struct TerminalTabsView: View {
         return name.contains("rancher") ||
             name.contains("rke2") ||
             name.contains("cluster")
+    }
+
+    private func isAggregatorTab(_ tab: TerminalSession) -> Bool {
+        tab.spec.metadata["guardicoreTarget"] == "aggregator"
     }
 
     private var tabBar: some View {

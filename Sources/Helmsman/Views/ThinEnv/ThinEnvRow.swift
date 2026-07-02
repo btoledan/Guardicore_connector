@@ -35,6 +35,7 @@ struct ThinEnvRow: View {
     @State private var pendingAggregatorDelete:     GuardicoreAggregator?
     @State private var showDeleteClusterAlert        = false
     @State private var showDeleteAggregatorAlert     = false
+    @State private var isSyncingClusters             = false
 
     private var env: ThinEnvironment? { thinEnvStore.environment(id: envID) }
 
@@ -283,6 +284,23 @@ struct ThinEnvRow: View {
             .buttonStyle(.plain)
             .foregroundColor(AppTheme.text.secondary)
 
+            Button { syncClusters() } label: {
+                HStack(spacing: 4) {
+                    if isSyncingClusters {
+                        ProgressView()
+                            .controlSize(.mini)
+                            .scaleEffect(0.7)
+                    } else {
+                        Image(systemName: "arrow.triangle.2.circlepath")
+                    }
+                    Text(isSyncingClusters ? "Syncing…" : "Sync Clusters")
+                }
+                .font(.caption2.weight(.medium))
+            }
+            .buttonStyle(.plain)
+            .foregroundColor(AppTheme.accent.primary)
+            .disabled(isSyncingClusters)
+
             Spacer()
         }
         .padding(.horizontal, 10)
@@ -305,6 +323,51 @@ struct ThinEnvRow: View {
         return "\(clusterText) · \(aggrText)"
     }
 
+    // MARK: - Auto-sync clusters
+
+    /// Probes the well-known cluster IPs through the env's double-hop SSH and
+    /// auto-adds any reachable cluster type that isn't already configured.
+    /// The manual "Add Cluster" button remains for custom clusters.
+    private func syncClusters() {
+        guard let env = thinEnvStore.environment(id: envID), !isSyncingClusters else { return }
+        isSyncingClusters = true
+        Task {
+            let results = await ClusterAutoSync.probe(env: env)
+            await MainActor.run {
+                applySyncResults(results)
+                isSyncingClusters = false
+            }
+        }
+    }
+
+    private func applySyncResults(_ results: [ClusterAutoSync.ProbeResult]) {
+        guard let env = thinEnvStore.environment(id: envID) else { return }
+
+        // Only the auto-probeable types (Rancher/RKE2/k3s/OpenShift) appear in results;
+        // custom clusters are never probed and therefore never auto-removed.
+        let existingByType = Dictionary(grouping: env.clusters, by: \.type)
+
+        // If nothing answered at all, the env/bastion path is likely down — don't wipe
+        // configured clusters on a transient outage. Only reconcile when we have proof
+        // the path works (at least one cluster responded).
+        let pathReachable = results.contains { $0.reachable }
+
+        for result in results {
+            let existing = existingByType[result.type] ?? []
+            if result.reachable {
+                if existing.isEmpty {
+                    thinEnvStore.addCluster(GuardicoreCluster(type: result.type), toEnvID: envID)
+                }
+            } else if pathReachable {
+                // Reachable through the env, but this cluster IP no longer answers →
+                // it was removed on the env, so drop it locally too.
+                for cluster in existing {
+                    thinEnvStore.deleteCluster(id: cluster.id, fromEnvID: envID)
+                }
+            }
+        }
+    }
+
     // MARK: - Connect
 
     private func connectToTester(_ env: ThinEnvironment) {
@@ -322,7 +385,20 @@ struct ThinEnvRow: View {
             let live = thinEnvStore.environment(id: env.id),
             let liveAggr = live.aggregators.first(where: { $0.id == aggr.id })
         else { return }
-        activeTerminals.openCommand(liveAggr.shellCommand(through: live), name: liveAggr.tabName(in: live))
+        activeTerminals.openCommand(
+            liveAggr.shellCommand(through: live),
+            name: liveAggr.tabName(in: live),
+            metadata: [
+                "guardicoreTarget": "aggregator",
+                "guardicoreAggregatorAddress": liveAggr.address,
+                // Template for running any command in the background:
+                // replace '__CMD_PLACEHOLDER__' with the desired command.
+                "guardicoreRemoteBase": liveAggr.remoteCommand(
+                    "__CMD_PLACEHOLDER__",
+                    through: live
+                ),
+            ]
+        )
     }
 
     private func connectToCluster(_ cluster: GuardicoreCluster, env: ThinEnvironment) {

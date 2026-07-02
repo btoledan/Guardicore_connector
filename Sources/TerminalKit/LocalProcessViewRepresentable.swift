@@ -24,6 +24,61 @@ open class TranscriptTerminalView: LocalProcessTerminalView {
         }
         super.processTerminated(source, exitCode: exitCode)
     }
+
+    // MARK: - Throttled paste
+
+    /// SwiftTerm's default paste pushes the whole clipboard to the PTY in one burst.
+    /// Over a forced-tty double-hop SSH connection the inner PTY buffer overflows and
+    /// silently drops bytes, which mangles long install commands full of quotes,
+    /// backslashes and `$`. macOS Terminal.app avoids this by throttling the paste.
+    /// We replicate that: normalise line endings, honour bracketed-paste mode, and
+    /// drip the bytes in small chunks so neither SSH hop loses characters.
+    open override func paste(_ sender: Any) {
+        guard
+            let raw = NSPasteboard.general.string(forType: .string),
+            !raw.isEmpty
+        else { return }
+
+        // Terminals submit lines on CR, not LF; collapse CRLF/LF to a single CR.
+        let normalized = raw
+            .replacingOccurrences(of: "\r\n", with: "\r")
+            .replacingOccurrences(of: "\n", with: "\r")
+
+        let bracketed = getTerminal().bracketedPasteMode
+        let bytes = Array(normalized.utf8)
+
+        if bracketed {
+            send(data: EscapeSequences.bracketedPasteStart[0...])
+        }
+        sendThrottled(bytes) { [weak self] in
+            guard let self else { return }
+            if bracketed {
+                self.send(data: EscapeSequences.bracketedPasteEnd[0...])
+            }
+        }
+    }
+
+    /// Sends `bytes` to the PTY in small chunks spaced by a short delay so a
+    /// chained SSH/tty pipeline can keep up without dropping characters.
+    private func sendThrottled(_ bytes: [UInt8], completion: @escaping () -> Void) {
+        let chunkSize = 128
+        let interChunkDelay = 0.010 // seconds
+
+        var index = 0
+        func sendNext() {
+            guard index < bytes.count else {
+                completion()
+                return
+            }
+            let end = min(index + chunkSize, bytes.count)
+            send(data: bytes[index..<end])
+            index = end
+            DispatchQueue.main.asyncAfter(deadline: .now() + interChunkDelay) {
+                sendNext()
+            }
+        }
+        sendNext()
+    }
 }
 
 // MARK: - SwiftUI NSViewRepresentable

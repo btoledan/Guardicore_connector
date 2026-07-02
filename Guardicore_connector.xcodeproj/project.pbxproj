@@ -16,17 +16,21 @@
 		17508BEB1AD05A807D57A1B5 /* ProxyJumpComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8D5950A8BE78438702BF04B /* ProxyJumpComposerView.swift */; };
 		1E5E10C64E8B649E5E8839AB /* SessionRowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E57AD194642BD2D93CF029 /* SessionRowView.swift */; };
 		223C8967765C0B0563D9D39F /* ProxyJumpChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = D643338F8F624FD30807FA4B /* ProxyJumpChain.swift */; };
+		2293DAEC3C7DFBD7F9DED64D /* PodLogBrowserSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B8F73032D12E286D7577EE5 /* PodLogBrowserSheet.swift */; };
+		25B8C4D51B3134DA630E0D4A /* AggregatorCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02A4FD036CBF7894A5806DE8 /* AggregatorCommands.swift */; };
 		263156C46798960F4C379541 /* KubeContextDockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4716C92384E76D9CC9A38CE7 /* KubeContextDockView.swift */; };
 		28B7238E66B462AD733238F6 /* AddClusterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4CBC2586A858EACBD8E1C7A /* AddClusterSheet.swift */; };
 		2DB8EF710817E40559E142FC /* KubeConfigParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C166876FBA852ABC05019B8A /* KubeConfigParser.swift */; };
 		319478FF09B31776BD298540 /* ThinEnvStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6CE9B15CE8FC9ABA6A0AB9 /* ThinEnvStore.swift */; };
 		32E847DD9D5D19A5F52F3171 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86F66A7DDF201AB4F0A8F728 /* Keychain.swift */; };
 		36C24A2F6EAEB79C7F007A03 /* KubeJSONParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77A846BDBBCF130698623EEB /* KubeJSONParser.swift */; };
+		378E55D054AC5DFFF51D9051 /* ClusterAutoSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53369A5584CCF4CA24806EC2 /* ClusterAutoSync.swift */; };
 		3C5B274E033049AD776F93C6 /* ScanResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72FADAF1BC78A5F49B8256D3 /* ScanResult.swift */; };
 		40F88DF1E9A3F15AA44665E7 /* ProxyJumpTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0B717A1B3344DF224B66F02 /* ProxyJumpTests.swift */; };
 		42AFFC16645845C730DCE666 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2D4E2CF8E4F00B7E0EDAFE7 /* SettingsView.swift */; };
 		49FCC289AC9365B1A60CEEDE /* NetScanKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EB2BDCF68A63986417A0F5B3 /* NetScanKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4B76396A699DF7F3EEEF915A /* SnippetLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7244503D498F6BF4E250809C /* SnippetLibrary.swift */; };
+		4FFF7A1E46DC43A2671AC576 /* AggregatorControlPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AA5F095F16C20FF19C12F8 /* AggregatorControlPanelView.swift */; };
 		5006130877EC4ABCFDDE04EA /* ORSSerial in Frameworks */ = {isa = PBXBuildFile; productRef = C536C64D0E31FA4E0E9D7314 /* ORSSerial */; };
 		52AD0C66EECCC819BFA1CFF4 /* ClusterControlPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56288CD027C9BBC898775A7 /* ClusterControlPanelView.swift */; };
 		5A7E5E599C152A1F43102662 /* ClusterCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = C09E1CB52CAA459E7970177C /* ClusterCommands.swift */; };
@@ -62,6 +66,7 @@
 		9BE99A9F4C459B6866AEAD58 /* RootContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714AA1DB63DE2E8FB6A91F5F /* RootContentView.swift */; };
 		9E9656F2ED957509414EC835 /* ClusterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D82AE9DBD650D8C66542FB1 /* ClusterViewModel.swift */; };
 		9F7FAC11C2F98BE27EE734E6 /* TerminalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D051E7F239FED76195953E3F /* TerminalKit.framework */; };
+		9F8E30DB35EE5AF9F6179BCC /* AggregatorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EAC39C94F248207CA465531 /* AggregatorViewModel.swift */; };
 		A293F146C968FEE294F6996A /* SSHKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 82B06475FD40C0FB3BA2A781 /* SSHKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A61D276B78A6D12DB9BED646 /* CredentialKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8EF69984B68BDC785FFDE0D /* CredentialKind.swift */; };
 		AE118E5EA3D457B97C45CB96 /* KubeKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3953D2C514712F7C9A0A6C22 /* KubeKit.framework */; };
@@ -184,6 +189,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		02A4FD036CBF7894A5806DE8 /* AggregatorCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AggregatorCommands.swift; sourceTree = "<group>"; };
 		09583162A0390D11DB888E88 /* ClusterPoliciesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterPoliciesView.swift; sourceTree = "<group>"; };
 		1DB4A7902A78FB62608BC1FE /* KubeContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KubeContext.swift; sourceTree = "<group>"; };
 		214A6A7B528C51462859B16B /* TerminalTabsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalTabsView.swift; sourceTree = "<group>"; };
@@ -198,10 +204,12 @@
 		4716C92384E76D9CC9A38CE7 /* KubeContextDockView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KubeContextDockView.swift; sourceTree = "<group>"; };
 		49EBE2BA36A7FF2A405E09DC /* ThinEnvRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThinEnvRow.swift; sourceTree = "<group>"; };
 		4AE6AB0546CC6E1E8A7748B1 /* TerminalPaneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalPaneView.swift; sourceTree = "<group>"; };
+		53369A5584CCF4CA24806EC2 /* ClusterAutoSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterAutoSync.swift; sourceTree = "<group>"; };
 		540F083F3A852D28735D1D1E /* HelmsmanApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelmsmanApp.swift; sourceTree = "<group>"; };
 		5D82AE9DBD650D8C66542FB1 /* ClusterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterViewModel.swift; sourceTree = "<group>"; };
 		6525A48CF4444E44D8FF0E28 /* NewSessionSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSessionSheet.swift; sourceTree = "<group>"; };
 		687242BB915602C697281E26 /* ClusterRawView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterRawView.swift; sourceTree = "<group>"; };
+		6EAC39C94F248207CA465531 /* AggregatorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AggregatorViewModel.swift; sourceTree = "<group>"; };
 		6F9AAFBFA4A46036D3D31D51 /* AppCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCommands.swift; sourceTree = "<group>"; };
 		70BE84B3FF1324CAFB25889C /* MultiExecView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiExecView.swift; sourceTree = "<group>"; };
 		714AA1DB63DE2E8FB6A91F5F /* RootContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootContentView.swift; sourceTree = "<group>"; };
@@ -227,6 +235,7 @@
 		934AF390F4446FBDCF890B5D /* GuardicoreStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuardicoreStatusView.swift; sourceTree = "<group>"; };
 		97123D5F31B9430629E94D0B /* NetworkScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkScanner.swift; sourceTree = "<group>"; };
 		981D710C8440B192EFC5DD15 /* SSHSessionDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHSessionDescriptor.swift; sourceTree = "<group>"; };
+		9B8F73032D12E286D7577EE5 /* PodLogBrowserSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodLogBrowserSheet.swift; sourceTree = "<group>"; };
 		A12E1E2011AD2013C96B4DFB /* SSHToolLocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSHToolLocator.swift; sourceTree = "<group>"; };
 		A3016166C49FE343EFCDCDD5 /* TerminalSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TerminalSession.swift; sourceTree = "<group>"; };
 		A8EF69984B68BDC785FFDE0D /* CredentialKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CredentialKind.swift; sourceTree = "<group>"; };
@@ -243,6 +252,7 @@
 		C2D4E2CF8E4F00B7E0EDAFE7 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		C3D0A568CF00C4B5C54940E6 /* SSHKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SSHKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4CBC2586A858EACBD8E1C7A /* AddClusterSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddClusterSheet.swift; sourceTree = "<group>"; };
+		C8AA5F095F16C20FF19C12F8 /* AggregatorControlPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AggregatorControlPanelView.swift; sourceTree = "<group>"; };
 		D051E7F239FED76195953E3F /* TerminalKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TerminalKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D0B717A1B3344DF224B66F02 /* ProxyJumpTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyJumpTests.swift; sourceTree = "<group>"; };
 		D56288CD027C9BBC898775A7 /* ClusterControlPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClusterControlPanelView.swift; sourceTree = "<group>"; };
@@ -401,6 +411,7 @@
 				87C1DEE0254C2DC3729984EE /* AddAggregatorSheet.swift */,
 				C4CBC2586A858EACBD8E1C7A /* AddClusterSheet.swift */,
 				F90B3568DEE40D7B69AD3B93 /* AddThinEnvSheet.swift */,
+				C8AA5F095F16C20FF19C12F8 /* AggregatorControlPanelView.swift */,
 				840AFD108A73CA8CE5F23083 /* ClusterCommandsView.swift */,
 				D56288CD027C9BBC898775A7 /* ClusterControlPanelView.swift */,
 				8F2BDB7CF735C4D9CA79CD1B /* ClusterCustomCommandsStorage.swift */,
@@ -411,6 +422,7 @@
 				DCBDAF72BA3BB83D61F74C3C /* ClusterViewComponents.swift */,
 				B23EA4805FC7B06F72E562AE /* ConnectionDetailsSheet.swift */,
 				934AF390F4446FBDCF890B5D /* GuardicoreStatusView.swift */,
+				9B8F73032D12E286D7577EE5 /* PodLogBrowserSheet.swift */,
 				D5AC1E3929C135898C359BC5 /* PolicyDigestionView.swift */,
 				49EBE2BA36A7FF2A405E09DC /* ThinEnvRow.swift */,
 				8286EC6FE576D86674AD72AD /* TrafficValidationView.swift */,
@@ -534,6 +546,9 @@
 			isa = PBXGroup;
 			children = (
 				7C7731171ACC2BC873AC6A0B /* ActiveTerminalsStore.swift */,
+				02A4FD036CBF7894A5806DE8 /* AggregatorCommands.swift */,
+				6EAC39C94F248207CA465531 /* AggregatorViewModel.swift */,
+				53369A5584CCF4CA24806EC2 /* ClusterAutoSync.swift */,
 				C09E1CB52CAA459E7970177C /* ClusterCommands.swift */,
 				88C23105631B47CCC3FCF4CD /* ClusterSnapshot.swift */,
 				3A2F3E8E9208F318740F74EB /* ClusterSnapshotExport.swift */,
@@ -878,9 +893,13 @@
 				F793077CDC8C657F51D112F7 /* AddAggregatorSheet.swift in Sources */,
 				28B7238E66B462AD733238F6 /* AddClusterSheet.swift in Sources */,
 				130C949A9610F6C4F39304A9 /* AddThinEnvSheet.swift in Sources */,
+				25B8C4D51B3134DA630E0D4A /* AggregatorCommands.swift in Sources */,
+				4FFF7A1E46DC43A2671AC576 /* AggregatorControlPanelView.swift in Sources */,
+				9F8E30DB35EE5AF9F6179BCC /* AggregatorViewModel.swift in Sources */,
 				16123E9A51A5CA385911FEA6 /* AppCommands.swift in Sources */,
 				756D6A22437CDF36B2B7EBE1 /* AppDelegate.swift in Sources */,
 				9682BEEF2F65AAB142640F49 /* AppTheme.swift in Sources */,
+				378E55D054AC5DFFF51D9051 /* ClusterAutoSync.swift in Sources */,
 				5A7E5E599C152A1F43102662 /* ClusterCommands.swift in Sources */,
 				ECB7537378F1ABBA2141433E /* ClusterCommandsView.swift in Sources */,
 				52AD0C66EECCC819BFA1CFF4 /* ClusterControlPanelView.swift in Sources */,
@@ -902,6 +921,7 @@
 				C8740564AC7C0343FB45DD81 /* MultiExecView.swift in Sources */,
 				CB561CAEDE090D78BB6055D1 /* NetworkScannerView.swift in Sources */,
 				9B104DA960FB0487656EDD8F /* NewSessionSheet.swift in Sources */,
+				2293DAEC3C7DFBD7F9DED64D /* PodLogBrowserSheet.swift in Sources */,
 				8F62B181CBDD78E0CA8F04C1 /* PolicyDigestionView.swift in Sources */,
 				17508BEB1AD05A807D57A1B5 /* ProxyJumpComposerView.swift in Sources */,
 				9BE99A9F4C459B6866AEAD58 /* RootContentView.swift in Sources */,

@@ -135,6 +135,20 @@ public struct GuardicoreAggregator: Identifiable, Codable, Hashable, Sendable {
         return SSHDoubleHop.command(through: env, username: u, password: p, remoteHost: address)
     }
 
+    /// Runs a single command on the aggregator (no interactive shell) for background
+    /// collection such as `monicore-ctrl status`.
+    public func remoteCommand(_ command: String, through env: ThinEnvironment) -> String {
+        let p = password.isEmpty ? env.password : password
+        let u = username.isEmpty ? env.username : username
+        return SSHDoubleHop.command(
+            through: env,
+            username: u,
+            password: p,
+            remoteHost: address,
+            remoteCommand: command
+        )
+    }
+
     public func tabName(in env: ThinEnvironment) -> String {
         "\(env.envNumber) › \(displayName)"
     }
